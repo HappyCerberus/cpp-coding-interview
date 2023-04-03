@@ -1,0 +1,7 @@
+# Divide and Conquer
+
+## Binary search on monotonic functions
+
+## Binary search on convex / concave functions
+
+## Subproblems

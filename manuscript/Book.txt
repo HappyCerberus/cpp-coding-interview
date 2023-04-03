@@ -1,2 +1,6 @@
-chapter1-the-basics.txt
-chapter2-writing-in-markua.txt
+p01-header.txt
+p01c01-introduction.txt
+p01c02-how-to-use-this-book.txt
+p02-header.txt
+p02c01-foundations.txt
+p02c02-divide-and-conquer.txt
