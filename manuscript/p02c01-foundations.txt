@@ -1,7 +1,0 @@
-# Foundations
-
-## Big-O
-
-## Depth-first search
-
-## Breadth-first search
