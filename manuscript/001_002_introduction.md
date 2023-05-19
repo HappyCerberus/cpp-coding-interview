@@ -2,20 +2,20 @@
 
 ## Book structure
 
-Training will be a critical part of the learning process unless you possess the gift of eidetic memory. This book is designed to both guide and help you during the training process.
+Unless you're blessed with a photographic memory, training will be essential to your learning journey. This book is specifically designed to facilitate and enrich this process for you.
 
-Each chapter of the book follows the same structure:
+Each chapter adheres to a consistent structure to ensure a steady progression. We start with an introduction that covers relevant C++ background as necessary. Then, we move on to basic patterns and simple operations. Each chapter concludes with carefully selected problems, complemented by solutions and commentary.
 
-- introduction with any relevant C++-specific background
-- base patterns and simple operations
-- hand-picked problems with commented solutions
-
-The chapters follow a relatively sequential structure, building upon each other. However, that doesn't mean you must read the chapters in a sequence. The book provides a complete index; when you run into a concept or algorithm you are unfamiliar with, check the index.
+While the chapters are sequential, with each building on the foundations of the previous, the book doesn't restrict you to strict reading order. Instead, it comes with a comprehensive index. You can always refer to the index to lookup more details if you encounter an unfamiliar concept or algorithm.
 
 ## Training
 
-The book comes with a companion repository that contains a test suite and scaffolding for each of the problems. The repository is also configured with a DevContainer. You will get a fully working C++ development environment with the latest stable GCC, GDB and Clang if you open the repository in VS Code. The only prerequisites are Visual Studio Code and Docker.
+This book is complemented by a repository that provides a test suite and scaffolding for each problem. The repository is set up with a DevContainer. It allows for a seamless C++ development environment, equipped with the latest stable versions of GCC, GDB, and Clang when accessed through VS Code. All you need to take full advantage of this are Visual Studio Code and Docker.
 
-Practice is crucial, so always try to solve the presented problems yourself before you read the solutions. Even if you do not know how to approach the problem with the requested complexity, at least try to solve the problem using brute force.
+The process you employ to solve the problems presented in this book is essential. Typically, in a coding interview, you vocalize your thoughts to allow for feedback and guidance. However, while using this book, that instant interaction isn't available. Should you find yourself stuck, consider this strategy:
 
-Once you have the brute-force solution working, consider how you could optimize it. For example, what work are you duplicating, and how can you eliminate it? This iterative process is crucial when the path toward an optimal solution isn't clear.
+First, ensure you grasp the problem at hand. Then, try sketching it out or examining some examples on paper.
+
+Next, see if you can implement a simple brute-force solution as a starting point. From there, ask yourself what could be optimized. Is there repeated work? Can one solution inform another?
+
+If you're genuinely stumped, the hints section could offer valuable insight. It begins by outlining the tools or approaches that might be useful and then provides more detailed suggestions.
