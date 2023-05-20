@@ -26,12 +26,11 @@ B> The scaffolding for this problem is located at `lists/merge`.
 B>
 B> The following commands should pass without any errors: `bazel test //lists/merge/...`, `bazel test --config=addrsan //lists/merge/...`, `bazel test --config=ubsan //lists/merge/...`.
 
-
 ## Remove the nth element from the end of a list
 
 Given a singly-linked list and a positive integer n, remove the nth element (counted) from the end of the list.
 
-You should be able to implement a version that operates in O(k), where k is the number of elements in the list.
+You should be able to implement a version that operates in O(k) time and uses O(1) additional memory, where k is the number of elements in the list.
 
 {class: information}
 B> The scaffolding for this problem is located at `lists/endoflist`.
@@ -45,6 +44,8 @@ Given a potentially corrupted singly-linked list, determine whether it is corrup
 Progression A: return the node that is the first node on the loop.
 
 Progression B: fix the list.
+
+You should be able to implement a version that operates in O(n) and uses O(1) additional memory, where n is the number of elements in the list.
 
 {class: information}
 B> The scaffolding for this problem is located at `lists/loop` for the basic version and `lists/loop_a`, `lists/loop_b` for the two progressions.
