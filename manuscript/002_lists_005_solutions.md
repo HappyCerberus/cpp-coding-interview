@@ -1,3 +1,4 @@
+{full: true, community: true}
 # Solutions
 
 ## Reverse k-groups in a list

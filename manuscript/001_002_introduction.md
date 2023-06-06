@@ -1,3 +1,4 @@
+{full: true, community: true}
 # Introduction
 
 ## Book structure

@@ -1,3 +1,4 @@
+{full: true, community: true}
 # Canonical problems
 
 Now that we've covered the basics, let's move on to real-world problems often seen in technical interviews. This next section will cover four linked list challenges: reversing k-groups in a list, merging a list of sorted lists, removing the kth element from the end, and finding a loop in a corrupted list.
