@@ -17,12 +17,12 @@ The repository is set up with a DevContainer configuration. It allows for a seam
 
 To get up and running, follow these steps:
 
-1. Open Visual Studio Code, and select View>Command Palette. ![Open Command Palette](static/intro/vscode_01.png)
-2. Write in "git clone" and select the "Git: Clone" action. ![Write git clone](static/intro/vscode_02.png)
-3. Paste in the companion repository URL: "https://github.com/HappyCerberus/cpp-coding-interview-companion" and confirm. ![Paste in the URL](static/intro/vscode_03.png)
-4. Visual Studio Code will ask for a location and, once done, will ask to open the cloned repository. Confirm. ![Confirm open](static/intro/vscode_04.png)
-5. Visual Studio Code will now ask whether you trust me. Confirm that you do. You can see all the relevant configuration inside the repository in the `.vscode` and `.devcontainer` directories. ![Confirm trust](static/intro/vscode_05.png)
-6. Finally, Visual Studio Code will detect the devcontainer configuration and ask whether you want to re-open the project in the devcontainer. Confirm. After VSCode downloads the container, you will have a fully working C++ development environment with the latest GCC, Clang, GDB, and Bazel. ![Reopen in container](static/intro/vscode_06.png)
+1. Open Visual Studio Code, and select *View>Command Palette*. ![Open Command Palette](intro/vscode_01.png)
+2. Write in `git clone` and select the *Git: Clone* action. ![Write git clone](intro/vscode_02.png)
+3. Paste in the companion repository URL: [github.com/HappyCerberus/cpp-coding-interview-companion](https://github.com/HappyCerberus/cpp-coding-interview-companion) and confirm. ![Paste in the URL](intro/vscode_03.png)
+4. Visual Studio Code will ask for a location and, once done, will ask to open the cloned repository. Confirm. ![Confirm open](intro/vscode_04.png)
+5. Visual Studio Code will now ask whether you trust me. Confirm that you do. You can see all the relevant configuration inside the repository in the `.vscode` and `.devcontainer` directories. ![Confirm trust](intro/vscode_05.png)
+6. Finally, Visual Studio Code will detect the devcontainer configuration and ask whether you want to re-open the project in the devcontainer. Confirm. After VSCode downloads the container, you will have a fully working C++ development environment with the latest GCC, Clang, GDB, and Bazel. ![Reopen in container](intro/vscode_06.png)
 
 ## Using this book
 
