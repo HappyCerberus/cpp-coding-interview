@@ -3,7 +3,7 @@
 
 While rare in practical applications, linked lists crop up frequently in interviews. Partly this is because the node structure lends itself to formulating tricky problems, similar to trees and graphs, without the added topological complexity.
 
-## *std::list* and *std::forward_list*
+# *std::list* and *std::forward_list*
 
 The standard library offers two list types, *std::list* - a doubly-linked list and *std::forward_list* - a singly-linked list.
 The *std::forward_list* exists primarily as a space optimization, saving 8 bytes per element on 64-bit architectures.
@@ -119,12 +119,162 @@ data.erase_after(it);
 ```
 <!-- https://compiler-explorer.com/z/sozrMh8MT -->
 
-## Custom lists
+# Custom lists
 
-When implementing a custom linked list, you might be tempted to implement a singly-linked list like this:
+When implementing a simple custom linked list, you might be tempted to use a straightforward implementation using a *std::unique_ptr*.
 
-Sadly, this approach isn't quite correct. The approach exhibits a design problem; we mix resource management with structural information. In this case, this problem manifests during destruction. Since we have tied the ownership to the list structure, the destruction will be recursive, potentially running out of stack space and leading to a crash.
+{caption: "A naive approach to a linked list."}
+```cpp
+#include <memory>
 
-In the case of a linked list, we don't have the option of working around manual resource management as long as we want to maintain O(1) complexity for splicing and iterator and reference stability.
+struct Node {
+    int value;
+    std::unique_ptr<Node> next;
+};
 
-We can replicate the directional structure with reference stability without O(1) splicing operations using a std::vector of std::unique_ptr.
+std::unique_ptr<Node> head = std::make_unique<Node>(20,nullptr);
+head->next = std::make_unique<Node>(42,nullptr);
+// head->value == 20
+// head->next->value == 42
+```
+
+<!-- https://compiler-explorer.com/z/Mr71dfKME -->
+
+
+Sadly, this approach isn’t usable. The fundamental problem here is the design. We are mixing ownership with structural information. In this case, this problem manifests during destruction. Because we have tied the ownership with the structure, the destruction of a list will be recursive, potentially leading to stack exhaustion and a crash.
+
+{caption: "A demonstration of a problem caused by recursive destruction."}
+```cpp
+#include <memory>
+
+struct Node {
+    int value;
+    std::unique_ptr<Node> next;
+};
+
+{
+std::unique_ptr<Node> head = std::make_unique<Node>(0,nullptr);
+// Depending on the architecture/compiler, the specific number
+// of elements we can handle without crash will differ.
+Node* it = head.get();
+for (int i = 0; i < 100000; ++i)
+    it = (it->next = std::make_unique<Node>(0,nullptr)).get();
+} // BOOM
+```
+
+<!-- https://compiler-explorer.com/z/jcca17d7b -->
+
+{class: information}
+B> The recursive nature comes from chaining *std::unique_ptr*. As part of destroying a *std::unique_ptr<Node>* we need first to destroy the nested next pointer, which in turn needs to destroy its nested next pointer, and so on.
+B> A destruction of the linked list means a full expansion of destructors until we reach the end of the list.
+B> After reaching the end of the list, we can finally finish the destruction of the trailing node, propagating back towards the front.
+B> Each program has a limited stack space, and a sufficiently long naive linked list can easily exhaust this space.
+
+If we desire both the `O(1)`$ operations and iterator stability, the only option is to rely on manual resource management (at which point we might as well use *std::list* or *std::forward_list*).
+
+However, if we limit ourselves, there are a few alternatives to *std::list* and *std::forward_list*.
+
+If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any `O(1)`$ operations or iterator stability; however, this approach is often used during interviews.
+
+{caption: "Representing the structure of a linked list using a std::vector and std::unique_ptr."}
+```cpp
+#include <vector>
+#include <memory>
+
+struct List {
+    struct Node {
+        int value;
+        Node* next;
+    };
+    Node *head = nullptr;
+    Node *new_after(Node* prev, int value) {
+        nodes_.push_back(std::make_unique<Node>(value, nullptr));
+        if (prev == nullptr)
+            return head = nodes_.back().get();
+        else
+            return prev->next = nodes_.back().get();
+    }
+private:
+    std::vector<std::unique_ptr<Node>> nodes_;
+};
+
+
+List list;
+auto it = list.new_after(nullptr, 1);
+it = list.new_after(it, 2);
+it = list.new_after(it, 3);
+
+// list.head->value == 1
+// list.head->next->value == 2
+// list.head->next->next->value == 3
+```
+
+The crucial difference from the naive approach is that the list data structure owns all nodes, and the structure is encoded only using weak pointers.
+
+Finally, if we do not require stable iterators or references but do require `O(1)`$ operations, we can use a flat list approach.
+We can store all elements directly in a *std::vector* and represent information about the next and previous nodes using indexes.
+
+However, this introduces a problem. Erasing an element from the middle of a *std::vector* is `O(n)`$ because we need to shift successive elements to fill the gap. Since we are encoding the list structure, we can swap the to-be-erased element with the last element and only then erase it in `O(1)`$.
+
+{caption: "Erase an element from the middle of a flat list in O(1)."}
+```cpp
+#include <vector>
+
+inline constexpr ptrdiff_t nill = -1;
+
+struct List {  
+    struct Node {
+        int value;
+        ptrdiff_t next;
+        ptrdiff_t prev;
+    };
+    ptrdiff_t new_after(ptrdiff_t prev, int value) {
+        storage.push_back({value, nill, prev});
+        if (prev != nill)
+            storage[prev].next = std::ssize(storage)-1;
+        else
+            head = std::ssize(storage)-1;
+        return std::ssize(storage)-1;
+    }
+    void erase(ptrdiff_t idx) {
+        // move head
+        if (idx == head)
+            head = storage[idx].next;
+        // unlink the erased element
+        if (storage[idx].next != nill)
+            storage[storage[idx].next].prev = storage[idx].prev;
+        if (storage[idx].prev != nill)
+            storage[storage[idx].prev].next = storage[idx].next;
+        // relink the last element
+        if (idx != std::ssize(storage)-1) {
+            if (storage.back().next != nill)
+                storage[storage.back().next].prev = idx;
+            if (storage.back().prev != nill)
+                storage[storage.back().prev].next = idx;
+        }
+        // swap and O(1) erase
+        std::swap(storage[idx],storage.back());
+        storage.pop_back();
+    }
+    ptrdiff_t get_head() { return head; }
+    Node& at(ptrdiff_t idx) { return storage[idx]; }
+private:
+    ptrdiff_t head = nill;
+    std::vector<Node> storage;
+};
+
+
+List list;
+ptrdiff_t idx = list.new_after(nill, 1);
+idx = list.new_after(idx, 2);
+idx = list.new_after(idx, 3);
+idx = list.new_after(idx, 4);
+idx = list.new_after(idx, 5);
+// list == {1,2,3,4,5}
+
+idx = list.get_head();
+list.erase(idx);
+// list == {2,3,4,5}
+```
+
+<!-- https://compiler-explorer.com/z/on997o5zb -->
