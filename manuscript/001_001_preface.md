@@ -1,4 +1,4 @@
-{class: part, full: true, community: true}
+{full: true, community: true}
 # Preface
 
 Welcome, you are reading the Surviving the C++ coding interview book. I conceived this book's idea during the mass layoffs of 2022/2023.

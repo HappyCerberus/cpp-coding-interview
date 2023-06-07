@@ -1,9 +1,9 @@
-{class: part, full: true, community: true}
+{full: true, community: true}
 # Linked Lists
 
 While rare in practical applications, linked lists crop up frequently in interviews. Partly this is because the node structure lends itself to formulating tricky problems, similar to trees and graphs, without the added topological complexity.
 
-# *std::list* and *std::forward_list*
+## *std::list* and *std::forward_list*
 
 The standard library offers two list types, *std::list* - a doubly-linked list and *std::forward_list* - a singly-linked list.
 The *std::forward_list* exists primarily as a space optimization, saving 8 bytes per element on 64-bit architectures.
