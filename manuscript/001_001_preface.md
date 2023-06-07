@@ -11,28 +11,20 @@ After finishing this book, you should be able to recognize the solution patterns
 
 As with all my books, this book focuses on practical information. The text is interspersed with commented examples, and the book comes with a companion repository that contains a comprehensive test suite. You are encouraged to attempt to solve each of the presented problems yourself and only then compare it with the commented solution.
 
-{full: true, community: false}
-## The commercial edition
+## The commercial edition vs. community edition
 
-Thank you for purchasing the commercial edition of this book.
-
-This book is part of my Creative Common series (under the CC-BY-NC-SA  4.0 license), and as such, the commercial edition doesn't differ from the community edition (other than this section).
+This book is part of my Creative Common series (under the CC-BY-NC-SA  4.0 license), and as such, the commercial edition doesn't differ from the community edition.
 
 On top of that, 100% of my royalties from the purchases of this book go to the Electronic Frontier Foundation.
-
-{full: false, community: true}
-## The community edition
-
-Thank you for downloading the community edition of this book.
-
-This book is part of my Creative Common series (under the CC-BY-NC-SA  4.0 license), and as such, the community edition doesn't differ from the commercial edition (other than this section).
 
 ## The author
 
 I am Šimon Tóth, the sole author of this book. My primary qualification is 20 years of C++ experience, with C++ being my primary language in a commercial setting for approximately 15 of those years.
 
-My background is in HPC, spanning academia, big tech and startup environments.
+My background is in HPC, spanning academia, big tech, and startup environments.
 
-I have architected, built and operated systems of all scales, from single machine hardware supported high-availability to planet-scale services.
+I have architected, built, and operated systems of all scales, from single-machine hardware-supported high-availability to planet-scale services.
 
 My passion has always been teaching and mentoring junior engineers throughout my career, which is why you are now reading this book.
+
+For more about me, check out my [LinkedIn profile](https://www.linkedin.com/in/simontoth/).
