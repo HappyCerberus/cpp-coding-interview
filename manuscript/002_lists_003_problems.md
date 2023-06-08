@@ -9,12 +9,12 @@ It's a step up from what we've done so far, but with the foundation you've built
 
 Our first challenge is all about diligence. Given a singly-linked list and a positive integer k, transpose the list so that each group of k elements is in reversed internal order. If k doesn't divide the number of elements without a remainder, the remainder of nodes should be left in their original order.
 
-You should be able to implement a version that operates in `O(n)`$ time and `O(1)`$ additional space, where n is the number of elements in the list.
+![Example of reversing groups of 3 elements.](linked_list/list_reverse_k_groups_01.png)
+
+You should be able to implement a version that operates in *O(n)* time and *O(1)* additional space, where n is the number of elements in the list.
 
 {class: information}
-B> The scaffolding for this problem is located at `lists/kgroups`.
-B>
-B> The following commands should pass without any errors: `bazel test //lists/kgroups/...`, `bazel test --config=addrsan //lists/kgroups/...`, `bazel test --config=ubsan //lists/kgroups/...`.
+B> The scaffolding for this problem is located at `lists/k_groups`. Your goal is to make the following commands pass without any errors: `bazel test //lists/k_groups/...`, `bazel test --config=addrsan //lists/k_groups/...`, `bazel test --config=ubsan //lists/k_groups/...`.
 
 ### Merge a list of sorted lists
 
