@@ -1,7 +1,7 @@
 {full: true, community: true}
-# Solutions
+## Solutions
 
-## Reverse k-groups in a list
+### Reverse k-groups in a list
 
 There isn’t anything algorithmically complex in this problem. However, there are many opportunities to trip up and make a mistake.
 
@@ -73,7 +73,7 @@ We access each element at most twice. Once when advancing by k elements and the 
 
 <!-- https://compiler-explorer.com/z/crzYq3jjn -->
 
-## Merge a list of sorted lists
+### Merge a list of sorted lists
 
 We already discussed merging two lists in the simple operations section. However, we need to be careful here. If we would merge-in each list in a loop, we would end up with `$O(k*n)$` time complexity.
 
@@ -152,7 +152,7 @@ We merge `$n$` elements in every iteration, repeating this for `$\log k$` iterat
 <!-- https://compiler-explorer.com/z/r7GrhvcMv -->
 
 
-## Remove the kth element from the end of a list
+### Remove the kth element from the end of a list
 
 The trivial approach would be to check whether we are at the kth element from the back and, if not, advance to the next element. However, this approach would have `$O(n*n)$` time complexity.
 
@@ -185,5 +185,5 @@ void remove_kth_from_end(std::forward_list<int64_t>& head, int64_t k) {
 
 <!-- https://compiler-explorer.com/z/1TYj6q6x5 -->
 
-## Find a loop in a linked list
+### Find a loop in a linked list
 

@@ -1,2 +1,2 @@
 {full: true, community: true}
-# Tips
+## Hints
