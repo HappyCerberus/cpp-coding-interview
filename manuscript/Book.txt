@@ -3,5 +3,5 @@
 002_lists_001_theory.md
 002_lists_002_simple.md
 002_lists_003_problems.md
-002_lists_004_tips.md
+002_lists_004_hints.md
 002_lists_005_solutions.md

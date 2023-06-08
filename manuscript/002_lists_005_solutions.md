@@ -30,6 +30,15 @@ The complexity lies in applying this operation multiple times in sequence. For t
 - the tail of the already processed part; this is where we will attach each reversed section as we iterate
 - the head of the unprocessed part; both for iteration and to link the tail of the processed part
 
+![Keeping track of nodes](linked_list/list_reverse_kgroup_solution_01.png)
+
+The algorithm repeats these steps:
+
+![Calculate the kth element by advancing k steps from the unprocessed head.](linked_list/list_reverse_kgroup_solution_02.png)
+![Reverse k elements starting from the unprocessed head.](linked_list/list_reverse_kgroup_solution_03.png)
+![Connect the reversed group to the tail of the processed part. Connect the unprocessed head to the kth element.](linked_list/list_reverse_kgroup_solution_04.png)
+![The new tail is the unprocessed head. The new unprocessed head is the kth element.](linked_list/list_reverse_kgroup_solution_05.png)
+
 {caption: "Solution"}
 ```cpp
 void reverse_groups(List &list, int64_t k) {
