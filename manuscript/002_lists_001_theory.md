@@ -51,7 +51,7 @@ stable.erase(stable.begin()); // invalidates all iterators
 
 Of course, we do pay for this stability with performance. Linked lists are node-based containers, meaning each element is allocated in a separate node, potentially very distant from each other in memory. When we combine this with the inherent overhead of the indirection, traversing a *std::list* can regularly end up 5x-10x slower than an equivalent flat *std::vector*.
 
-Aside from iterator stability, we also get access to a suite of `O(1)`$ operations, and these can potentially outweigh the inherent overhead of a *std::list*.
+Aside from iterator stability, we also get access to a suite of *O(1)* operations, and these can potentially outweigh the inherent overhead of a *std::list*.
 
 {caption: "O(1) operations using a std::list and std::forward_list."}
 ```cpp
@@ -119,7 +119,7 @@ data.erase_after(it);
 ```
 <!-- https://compiler-explorer.com/z/sozrMh8MT -->
 
-# Custom lists
+## Custom lists
 
 When implementing a simple custom linked list, you might be tempted to use a straightforward implementation using a *std::unique_ptr*.
 
@@ -165,16 +165,16 @@ for (int i = 0; i < 100000; ++i)
 <!-- https://compiler-explorer.com/z/jcca17d7b -->
 
 {class: information}
-B> The recursive nature comes from chaining *std::unique_ptr*. As part of destroying a *std::unique_ptr<Node>* we need first to destroy the nested next pointer, which in turn needs to destroy its nested next pointer, and so on.
+B> The recursive nature comes from chaining *std::unique_ptr*. As part of destroying a *std::unique_ptr\<Node\>* we need first to destroy the nested next pointer, which in turn needs to destroy its nested next pointer, and so on.
 B> A destruction of the linked list means a full expansion of destructors until we reach the end of the list.
 B> After reaching the end of the list, we can finally finish the destruction of the trailing node, propagating back towards the front.
 B> Each program has a limited stack space, and a sufficiently long naive linked list can easily exhaust this space.
 
-If we desire both the `O(1)`$ operations and iterator stability, the only option is to rely on manual resource management (at which point we might as well use *std::list* or *std::forward_list*).
+If we desire both the *O(1)* operations and iterator stability, the only option is to rely on manual resource management (at which point we might as well use *std::list* or *std::forward_list*).
 
 However, if we limit ourselves, there are a few alternatives to *std::list* and *std::forward_list*.
 
-If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any `O(1)`$ operations or iterator stability; however, this approach is often used during interviews.
+If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any *O(1)* operations or iterator stability; however, this approach is often used during interviews.
 
 {caption: "Representing the structure of a linked list using a std::vector and std::unique_ptr."}
 ```cpp
@@ -211,10 +211,10 @@ it = list.new_after(it, 3);
 
 The crucial difference from the naive approach is that the list data structure owns all nodes, and the structure is encoded only using weak pointers.
 
-Finally, if we do not require stable iterators or references but do require `O(1)`$ operations, we can use a flat list approach.
+Finally, if we do not require stable iterators or references but do require *O(1)* operations, we can use a flat list approach.
 We can store all elements directly in a *std::vector* and represent information about the next and previous nodes using indexes.
 
-However, this introduces a problem. Erasing an element from the middle of a *std::vector* is `O(n)`$ because we need to shift successive elements to fill the gap. Since we are encoding the list structure, we can swap the to-be-erased element with the last element and only then erase it in `O(1)`$.
+However, this introduces a problem. Erasing an element from the middle of a *std::vector* is *O(n)* because we need to shift successive elements to fill the gap. Since we are encoding the list structure, we can swap the to-be-erased element with the last element and only then erase it in *O(1)*.
 
 {caption: "Erase an element from the middle of a flat list in O(1)."}
 ```cpp
