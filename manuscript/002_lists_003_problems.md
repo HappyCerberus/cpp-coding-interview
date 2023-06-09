@@ -20,12 +20,12 @@ B> The scaffolding for this problem is located at `lists/k_groups`. Your goal is
 
 Given a list of sorted lists, return a merged sorted list.
 
-You should be able to implement a version that operates in `$O(n\log k)$` time and uses `$O(k)$` additional memory, where n is the total number of elements and k is the number of lists we are merging.
+![Example of merging three sorted lists.](linked_list/list_merge_k_lists_01.png)
+
+You should be able to implement a version that operates in *O(n\*log(k))* time and uses *O(k)* additional memory, where n is the total number of elements and k is the number of lists we are merging.
 
 {class: information}
-B> The scaffolding for this problem is located at `lists/merge`.
-B>
-B> The following commands should pass without any errors: `bazel test //lists/merge/...`, `bazel test --config=addrsan //lists/merge/...`, `bazel test --config=ubsan //lists/merge/...`.
+B> The scaffolding for this problem is located at `lists/merge`. Your goal is to make the following commands pass without any errors: `bazel test //lists/merge/...`, `bazel test --config=addrsan //lists/merge/...`, `bazel test --config=ubsan //lists/merge/...`.
 
 ### Remove the kth element from the end of a list
 

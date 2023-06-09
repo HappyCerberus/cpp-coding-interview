@@ -28,7 +28,7 @@ The complexity lies in applying this operation multiple times in sequence. For t
 
 - the head of the already processed part; this will be our final result
 - the tail of the already processed part; this is where we will attach each reversed section as we iterate
-- the head of the unprocessed part; both for iteration and to link the tail of the processed part
+- the head of the unprocessed part; for iteration and we also need it to relink the reversed group of k elements
 
 ![Keeping track of nodes](linked_list/list_reverse_kgroup_solution_01.png)
 
@@ -77,16 +77,17 @@ void reverse_groups(List &list, int64_t k) {
     list.head = result == nullptr ? unprocessed_head : result;
 }
 ```
-
-We access each element at most twice. Once when advancing by k elements and the second when we are reversing a group of k elements. This means that our time complexity is `$O(n)$`, and since we only store the terminal nodes, our space complexity is `$O(1)$`.
-
 <!-- https://compiler-explorer.com/z/crzYq3jjn -->
+
+We access each element at most twice. Once when advancing by k elements and the second when we are reversing a group of k elements. This means that our time complexity is *$O(n)*, and since we only store the terminal nodes, our space complexity is *O(1)*.
 
 ### Merge a list of sorted lists
 
-We already discussed merging two lists in the simple operations section. However, we need to be careful here. If we would merge-in each list in a loop, we would end up with `$O(k*n)$` time complexity.
+We already discussed merging two lists in the simple operations section. However, we need to be careful here. If we would merge-in each list in a loop, we would end up with *$O(k\*n)* time complexity, where *k* is the number of lists and *n* is the number of nodes.
 
-The desired `$O(n\log k)$` time complexity should point you towards some form of a sorted structure (`std::priority_queue`, heap algorithms, `std::set`). However, we have another option. If we merge lists in pairs, we also end up with `$O(\log k)$` iterations, leading to a total `$O(n\log k)$` time complexity.
+The desired *O(n\*log(k))* time complexity should point you towards some form of a sorted structure(*std::priority_queue*, heap algorithms, *std::set*). A sorted structure would give us *log(k)* lookup, which we can then repeat *n* times to traverse all the elements in order.
+
+The second way to reach *log* scaling is with an exponential factor. If we merge lists in pairs, we will half the number of lists in each step, with total *log(k)* steps, leaving us again with *O(n\*log(k))* complexity.
 
 In either case, we must be careful not to introduce accidental copies.
 
@@ -130,7 +131,7 @@ std::forward_list<int64_t> merge(std::forward_list<std::forward_list<int64_t>> i
 }
 ```
 
-Because we extract each element once and each extract operation involves `$O(\log k)$` insertion operation, we end up with `$O(n\log k)$` time complexity. Our `std::multiset` will use `$O(k)$` memory.
+Because we extract each element once and each extract operation involves *O(log(k))* insertion operation, we end up with *O(n\*log(k))* time complexity. Our *std::multiset* will use *O(k)* memory.
 
 {caption: "Solution using pairwise merging."}
 ```cpp
@@ -156,10 +157,9 @@ std::forward_list<int64_t> merge(std::forward_list<std::forward_list<int64_t>> i
 }
 ```
 
-We merge `$n$` elements in every iteration, repeating this for `$\log k$` iterations, leading to `$O(n\log k)$` time complexity. The only additional memory we use is to store the partially merged lists; therefore, we end up with `$O(k)$` space complexity.
+We merge *n* elements in every iteration, repeating this for *log(k)* iterations, leading to *O(n\*log(k))* time complexity. The only additional memory we use is to store the partially merged lists; therefore, we end up with *O(k)* space complexity.
 
 <!-- https://compiler-explorer.com/z/r7GrhvcMv -->
-
 
 ### Remove the kth element from the end of a list
 
