@@ -309,8 +309,8 @@ void loop_fix(List &list) {
     List::Node *onloop = slow;
     List::Node *offloop = list.head;
     while (onloop != offloop) {
-        // Keep track of the node one before the fast pointer
-        before = before->next;
+        // Keep track of the node one before the onloop pointer
+        before = onloop;
         onloop = onloop->next;
         offloop = offloop->next;
     }

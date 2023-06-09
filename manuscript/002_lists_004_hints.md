@@ -20,3 +20,7 @@
 
 ### Find a loop in a linked list
 
+1. What happens when there is no loop?
+2. If we iterate over the list and there is a loop, we get stuck; how could we detect this situation?
+3. Can we use two pointers?
+4. If we use one slow (moving by one) and fast (moving by two) pointer, they will meet up if there is a loop.
