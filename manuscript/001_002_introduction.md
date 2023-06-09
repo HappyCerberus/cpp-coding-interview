@@ -11,7 +11,7 @@ While the chapters are sequential, with each building on the foundations of the 
 
 ## Companion repository
 
-This book has a companion repository with a test suite and scaffolding for each problem.
+This book has a [companion repository](https://github.com/HappyCerberus/cpp-coding-interview-companion) with a test suite and scaffolding for each problem.
 
 The repository is set up with a DevContainer configuration. It allows for a seamless C++ development environment, equipped with the latest stable versions of GCC, GDB, and Clang when accessed through VS Code. All you need to take full advantage of this are [Visual Studio Code](https://code.visualstudio.com/download) and [Docker](https://www.docker.com/products/docker-desktop/).
 

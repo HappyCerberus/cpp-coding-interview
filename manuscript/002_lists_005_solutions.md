@@ -170,6 +170,7 @@ To check the next element, we do not have to repeat the entire process; instead,
 
 Extending this idea allows us to implement an *O(n)* solution. We calculate the first pair of elements that k apart, and from there, we advance both iterators in step until we reach the end of the list.
 
+{caption: "Solution"}
 ```cpp
 void remove_kth_from_end(std::forward_list<int64_t>& head, int64_t k) {
     auto node = head.before_begin();
@@ -197,3 +198,126 @@ void remove_kth_from_end(std::forward_list<int64_t>& head, int64_t k) {
 
 ### Find a loop in a linked list
 
+This problem is the prototypical problem for the fast and slow pointer technique (a.k.a. Floyd’s tortoise and hare).
+
+We will eventually reach the end if we iterate over the list without a loop. However, if there is a loop, we will end up stuck in the loop.
+
+The tricky part is detecting that we are stuck in the loop. If we use two pointers to iterate, one slow one, iterating normally and one fast one, iterating over two nodes in each step, we have a guarantee that if they get stuck in a loop, they will eventually meet.
+
+![Initial configuration: slow and fast pointers are pointing to the head of the list.](linked_list/list_loop_detect_01.png)
+
+![Configuration after two steps.](linked_list/list_loop_detect_02.png)
+
+![Configuration after four steps.](linked_list/list_loop_detect_03.png)
+
+![Configuration after six steps. Loop detected.](linked_list/list_loop_detect_04.png)
+
+{captions: "Detecting a loop"}
+```cpp
+bool loop_detection(const List &list) {
+    List::Node *slow = list.head;
+    List::Node *fast = list.head;
+    do {
+        // nullptr == no loop
+        if (slow == nullptr)
+            return false;
+        if (fast == nullptr || fast->next == nullptr)
+            return false;
+        slow = slow->next;
+        fast = fast->next->next;
+    } while (slow != fast);
+
+    return true;
+}
+```
+
+#### Identifying the start of the loop
+
+To detect the start of the loop, we must look at how many steps both pointers made before they met up.
+
+Consider that the slow pointer moved *x* steps before entering the loop and then *y* steps after entering the loop for a *slow = x + y* total.
+
+The fast pointer moved similarly. It also moved *x* steps before entering the loop and then *y* steps after entering the loop when it met up with the slow pointer; however, before that, it did an unknown number of loops: *fast = x + n\*loop + y*. Importantly, we also know that the fast pointer also did *2\*slow* steps.
+
+If we put this together, we end up with the following:
+
+- *2\*(x + y) = x + n\*loop + y*
+- *x = n\*loop - y*
+
+This means that the number of steps to reach the loop is the same as the number of steps remaining from where the pointers met up to the start of the loop.
+
+So to find the start of the loop, we can iterate from the start and the meeting point. Once these two new pointers meet, we have our loop start.
+
+![One pointer at the meeting point, one at the list head.](linked_list/list_loop_start_01.png)
+
+![The loop start is identified after two steps.](linked_list/list_loop_start_02.png)
+
+{caption: "Solution with start detection."}
+```cpp
+List::Node *loop_start(const List &list) {
+    // Phase 1, detect the loop.
+    List::Node *slow = list.head;
+    List::Node *fast = list.head;
+    do {
+        // nullptr == no loop
+        if (slow == nullptr)
+            return nullptr;
+        if (fast == nullptr || fast->next == nullptr)
+            return nullptr;
+        slow = slow->next;
+        fast = fast->next->next;
+    } while (slow != fast);
+
+    // Phase 2, iterate from head and from meeting point.
+    List::Node *onloop = slow;
+    List::Node *offloop = list.head;
+    while (onloop != offloop) {
+        onloop = onloop->next;
+        offloop = offloop->next;
+    }
+    return onloop;
+}
+```
+
+#### Fixing the list
+
+The main difficulty in fixing the list is that we are working with a singly-linked list. Fixing the list means that we must unlink node one before the start of the loop.
+
+{caption: "Solution for fixing the list."}
+```cpp
+void loop_fix(List &list) {
+    // Phase 1, detect the loop.
+    List::Node *slow = list.head;
+    List::Node *fast = list.head;
+    List::Node *before = nullptr;
+    do {
+        // nullptr == no loop
+        if (slow == nullptr)
+            return;
+        if (fast == nullptr || fast->next == nullptr)
+            return;
+        slow = slow->next;
+        // Keep track of the node one before the fast pointer
+        if (before == nullptr)
+            before = fast->next;
+        else
+            before = before->next->next;
+        fast = fast->next->next;
+    } while (slow != fast);
+
+    // Phase 2, iterate from head and from meeting point.
+    List::Node *onloop = slow;
+    List::Node *offloop = list.head;
+    while (onloop != offloop) {
+        // Keep track of the node one before the fast pointer
+        before = before->next;
+        onloop = onloop->next;
+        offloop = offloop->next;
+    }
+
+    // Phase 3, fix the list
+    if (before != nullptr) {
+        before->next = nullptr;
+    }
+}
+```
