@@ -163,11 +163,12 @@ We merge *n* elements in every iteration, repeating this for *log(k)* iterations
 
 ### Remove the kth element from the end of a list
 
-The trivial approach would be to check whether we are at the kth element from the back and, if not, advance to the next element. However, this approach would have `$O(n*n)$` time complexity.
+The trivial approach would be to check whether we are at the kth element from the back and, if not, advance to the next element. However, this approach would have *O(n\*k)* time complexity.
 
-Consider that once we have checked whether we are at the kth element from the back, we have to calculate the kth element. Moving to the next pair of elements that are k elements apart only requires that we advance both iterators at the same time.
+Once we check whether an element is the kth element from the back, we have two iterators that are *k-1* elements apart.
+To check the next element, we do not have to repeat the entire process; instead, we can advance the iterator pointing to the previous *k-1* apart element, again ending with a pair of elements that are *k-1* apart.
 
-Extending this idea allows us to implement an `$O(n)` solution. We calculate the first pair of elements that k apart, and from there, we advance both iterators in step until we reach the end of the list.
+Extending this idea allows us to implement an *O(n)* solution. We calculate the first pair of elements that k apart, and from there, we advance both iterators in step until we reach the end of the list.
 
 ```cpp
 void remove_kth_from_end(std::forward_list<int64_t>& head, int64_t k) {

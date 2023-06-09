@@ -27,28 +27,27 @@ You should be able to implement a version that operates in *O(n\*log(k))* time a
 {class: information}
 B> The scaffolding for this problem is located at `lists/merge`. Your goal is to make the following commands pass without any errors: `bazel test //lists/merge/...`, `bazel test --config=addrsan //lists/merge/...`, `bazel test --config=ubsan //lists/merge/...`.
 
-### Remove the kth element from the end of a list
+### Remove the kth element from the end of a singly-linked list
 
 Given a singly-linked list and a positive integer k, remove the kth element (counted) from the end of the list.
 
-You should be able to implement a version that operates in `$O(n)$` time and uses `$O(1)$` additional memory, where n is the number of elements in the list.
+![Example of removing the 3rd element from the end of the list.](linked_list/list_remove_kth_element_01.png)
+
+You should be able to implement a version that operates in *O(n)* time and uses *O(1)* additional memory, where *n* is the number of elements in the list.
 
 {class: information}
-B> The scaffolding for this problem is located at `lists/endoflist`.
-B>
-B> The following commands should pass without any errors: `bazel test //lists/endoflist/...`, `bazel test --config=addrsan //lists/endoflist/...`, `bazel test --config=ubsan //lists/endoflist/...`.
+B> The scaffolding for this problem is located at `lists/end_of_list`. Your goal is to make the following commands pass without any errors: `bazel test //lists/end_of_list/...`, `bazel test --config=addrsan //lists/end_of_list/...`, `bazel test --config=ubsan //lists/end_of_list/...`.
 
 ### Find a loop in a linked list
 
-Given a potentially corrupted singly-linked list, determine whether it is corrupted, i.e. it forms a loop.
+Given a potentially corrupted singly-linked list, determine whether it is corrupted, i.e., it forms a loop.
 
-Progression A: return the node that is the first node on the loop.
+![Example of a corrupted list.](linked_list/list_loop_01.png)
 
-Progression B: fix the list.
+- Progression A: return the node that is the first node on the loop.
+- Progression B: fix the list.
 
-You should be able to implement a version that operates in `$O(n)$` and uses `$O(1)$` additional memory, where n is the number of elements in the list.
+You should be able to implement a version that operates in *O(n)* and uses *O(1)* additional memory, where n is the number of elements in the list.
 
 {class: information}
-B> The scaffolding for this problem is located at `lists/loop` for the basic version and `lists/loop_a`, `lists/loop_b` for the two progressions.
-B>
-B> The following commands should pass without any errors: `bazel test //lists/loop/...`, `bazel test --config=addrsan //lists/loop/...`, `bazel test --config=ubsan //lists/loop/...`. Adjust the directory to `loop_a` and `loop_b` for the relevant progression.
+B> The scaffolding for this problem is located at `lists/loop` for the basic version and `lists/loop_node`, `lists/loop_fix` for the two progressions. Your goal is to make the following commands pass without any errors: `bazel test //lists/loop/...`, `bazel test --config=addrsan //lists/loop/...`, `bazel test --config=ubsan //lists/loop/...`. Adjust the directory to `loop_node` and `loop_fix` for the relevant progression.
