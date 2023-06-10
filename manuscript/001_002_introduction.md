@@ -32,4 +32,4 @@ First, ensure you grasp the problem at hand. Then, try sketching it out or exami
 
 Next, see if you can implement a simple brute-force solution as a starting point. From there, ask yourself what could be optimized. Is there repeated work? Can one solution inform another?
 
-If you're genuinely stumped, the hints section could offer valuable insight. It begins by outlining the tools or approaches that might be useful and then provides more detailed suggestions.
+If you're genuinely stumped, the hints section could offer valuable insight.

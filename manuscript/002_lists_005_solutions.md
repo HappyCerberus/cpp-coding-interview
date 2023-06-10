@@ -298,10 +298,7 @@ void loop_fix(List &list) {
             return;
         slow = slow->next;
         // Keep track of the node one before the fast pointer
-        if (before == nullptr)
-            before = fast->next;
-        else
-            before = before->next->next;
+        before = fast->next;
         fast = fast->next->next;
     } while (slow != fast);
 
@@ -315,9 +312,7 @@ void loop_fix(List &list) {
         offloop = offloop->next;
     }
 
-    // Phase 3, fix the list
-    if (before != nullptr) {
-        before->next = nullptr;
-    }
+    // Phase 3, fix the list, before != nullptr
+    before->next = nullptr;
 }
 ```
