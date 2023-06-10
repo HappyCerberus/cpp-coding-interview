@@ -5,7 +5,7 @@ While rare in practical applications, linked lists crop up frequently in intervi
 
 ## *std::list* and *std::forward_list*
 
-The standard library offers two list types, *std::list* - a doubly-linked list and *std::forward_list* - a singly-linked list.
+The standard library offers two list types, *std::list*{i: std::list} - a doubly-linked list and *std::forward_list*{i: std::forward_list} - a singly-linked list.
 The *std::forward_list* exists primarily as a space optimization, saving 8 bytes per element on 64-bit architectures.
 
 Both offer perfect iterator and reference stability, i.e., the only operation that invalidates iterators or references is the erasure of an element, and only for the removed element. The stability does extend even to moving elements between lists.
