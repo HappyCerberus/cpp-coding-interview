@@ -34,7 +34,7 @@ left.merge(right);
 
 <!-- https://compiler-explorer.com/z/q7z5r4PxY -->
 
-However, implementing one from scratch isn’t particularly complicated either. We consume the merged-in list, one element at a time, advancing the insertion position as needed{i: "lists|merge"}.
+However, implementing one from scratch isn’t particularly complicated either. We consume the merged-in list, one element at a time, advancing the insertion position as needed{i: "lists!merge"}.
 
 {caption: "Custom merge operation."}
 ```cpp

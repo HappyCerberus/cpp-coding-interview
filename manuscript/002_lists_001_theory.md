@@ -174,7 +174,7 @@ If we desire both the *O(1)* operations and iterator stability, the only option 
 
 However, if we limit ourselves, there are a few alternatives to *std::list* and *std::forward_list*.
 
-If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any *O(1)* operations or iterator stability; however, this approach is often used during interviews{i: "custom list!simple"}.
+If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any *O(1)* operations or iterator stability; however, this approach is often used during interviews{i: "lists!custom simple"}.
 
 {caption: "Representing the structure of a linked list using a std::vector and std::unique_ptr."}
 ```cpp
@@ -212,7 +212,7 @@ it = list.new_after(it, 3);
 The crucial difference from the naive approach is that the list data structure owns all nodes, and the structure is encoded only using weak pointers.
 
 Finally, if we do not require stable iterators or references but do require *O(1)* operations, we can use a flat list approach.
-We can store all elements directly in a *std::vector* and represent information about the next and previous nodes using indexes{i: "custom list!flat"}.
+We can store all elements directly in a *std::vector* and represent information about the next and previous nodes using indexes{i: "lists!custom flat"}.
 
 However, this introduces a problem. Erasing an element from the middle of a *std::vector* is *O(n)* because we need to shift successive elements to fill the gap. Since we are encoding the list structure, we can swap the to-be-erased element with the last element and only then erase it in *O(1)*.
 
