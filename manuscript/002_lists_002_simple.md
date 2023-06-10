@@ -34,7 +34,7 @@ left.merge(right);
 
 <!-- https://compiler-explorer.com/z/q7z5r4PxY -->
 
-However, implementing one from scratch isn’t particularly complicated either. We consume the merged-in list, one element at a time, advancing the insertion position as needed.
+However, implementing one from scratch isn’t particularly complicated either. We consume the merged-in list, one element at a time, advancing the insertion position as needed{i: "lists|merge"}.
 
 {caption: "Custom merge operation."}
 ```cpp
@@ -59,7 +59,7 @@ while (!src.empty()) {
 
 <!-- https://compiler-explorer.com/z/M1KP7hGo9 -->
 
-The same situation applies to reversing a list. Both lists provide a built-in in-place reverse operation.
+The same situation applies to reversing a list. Both lists provide a built-in in-place reverse operation{i: "lists|reverse"}.
 
 {caption: "Built-in in place reverse."}
 ```cpp
@@ -100,7 +100,7 @@ The in-place reverse takes advantage of the fact that the first element will be 
 
 ![Process of reversing a forward list in place.](linked_list/list_reverse_01.png)
 
-Finally, scanning with two iterators is a common search technique for finding a sequence of elements that conform to a particular property. As long as this property is calculated strictly from elements entering and leaving the sequence, we do not need to access the elements currently in the sequence.
+Finally, scanning with two iterators is a common search technique for finding a sequence of elements that conform to a particular property. As long as this property is calculated strictly from elements entering and leaving the sequence, we do not need to access the elements currently in the sequence{i: "two pointers|sliding window"}.
 
 {caption: "Find the longest subsequence with sum less than 4."}
 ```cpp

@@ -7,7 +7,7 @@ It's a step up from what we've done so far, but with the foundation you've built
 
 ### Reverse k-groups in a list
 
-Our first challenge is all about diligence. Given a singly-linked list and a positive integer k, transpose the list so that each group of k elements is in reversed internal order. If k doesn't divide the number of elements without a remainder, the remainder of nodes should be left in their original order.
+Our first challenge is all about diligence. Given a singly-linked list and a positive integer k, transpose the list so that each group of k elements is in reversed internal order. If k doesn't divide the number of elements without a remainder, the remainder of nodes should be left in their original order{i: "lists!reverse"}.
 
 ![Example of reversing groups of 3 elements.](linked_list/list_reverse_k_groups_01.png)
 
@@ -18,7 +18,7 @@ B> The scaffolding for this problem is located at `lists/k_groups`. Your goal is
 
 ### Merge a list of sorted lists
 
-Given a list of sorted lists, return a merged sorted list.
+Given a list of sorted lists, return a merged sorted list{i: "divide and conquer"}{i: "always-sorted data structure"}.
 
 ![Example of merging three sorted lists.](linked_list/list_merge_k_lists_01.png)
 
@@ -29,7 +29,7 @@ B> The scaffolding for this problem is located at `lists/merge`. Your goal is to
 
 ### Remove the kth element from the end of a singly-linked list
 
-Given a singly-linked list and a positive integer k, remove the kth element (counted) from the end of the list.
+Given a singly-linked list and a positive integer k, remove the kth element (counted) from the end of the list{i: "two pointers!sliding window"}.
 
 ![Example of removing the 3rd element from the end of the list.](linked_list/list_remove_kth_element_01.png)
 
@@ -40,7 +40,7 @@ B> The scaffolding for this problem is located at `lists/end_of_list`. Your goal
 
 ### Find a loop in a linked list
 
-Given a potentially corrupted singly-linked list, determine whether it is corrupted, i.e., it forms a loop.
+Given a potentially corrupted singly-linked list, determine whether it is corrupted, i.e., it forms a loop{i: "two pointers!slow and fast"}.
 
 ![Example of a corrupted list.](linked_list/list_loop_01.png)
 
