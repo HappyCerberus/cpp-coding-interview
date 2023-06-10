@@ -5,7 +5,7 @@ While rare in practical applications, linked lists crop up frequently in intervi
 
 ## *std::list* and *std::forward_list*
 
-The standard library offers two list types, *std::list*{i: std::list} - a doubly-linked list and *std::forward_list* - a singly-linked list.
+The standard library offers two list types, *std::list*{i: std::list} - a doubly-linked list and *std::forward_list*{i: std::forward\_list} - a singly-linked list.
 The *std::forward_list* exists primarily as a space optimization, saving 8 bytes per element on 64-bit architectures.
 
 Both offer perfect iterator and reference stability, i.e., the only operation that invalidates iterators or references is the erasure of an element, and only for the removed element. The stability does extend even to moving elements between lists.
@@ -174,7 +174,7 @@ If we desire both the *O(1)* operations and iterator stability, the only option 
 
 However, if we limit ourselves, there are a few alternatives to *std::list* and *std::forward_list*.
 
-If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any *O(1)* operations or iterator stability; however, this approach is often used during interviews.
+If we want to capture the structure of a linked list with reference stability, we can rely on the previously mentioned combination of a *std::vector* and a *std::unique_ptr*. This approach doesn't give us any *O(1)* operations or iterator stability; however, this approach is often used during interviews{i: "custom list!simple"}.
 
 {caption: "Representing the structure of a linked list using a std::vector and std::unique_ptr."}
 ```cpp
@@ -212,7 +212,7 @@ it = list.new_after(it, 3);
 The crucial difference from the naive approach is that the list data structure owns all nodes, and the structure is encoded only using weak pointers.
 
 Finally, if we do not require stable iterators or references but do require *O(1)* operations, we can use a flat list approach.
-We can store all elements directly in a *std::vector* and represent information about the next and previous nodes using indexes.
+We can store all elements directly in a *std::vector* and represent information about the next and previous nodes using indexes{i: "custom list!flat"}.
 
 However, this introduces a problem. Erasing an element from the middle of a *std::vector* is *O(n)* because we need to shift successive elements to fill the gap. Since we are encoding the list structure, we can swap the to-be-erased element with the last element and only then erase it in *O(1)*.
 
