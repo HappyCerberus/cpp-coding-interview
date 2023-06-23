@@ -5,3 +5,4 @@
 002_lists_003_problems.md
 002_lists_004_hints.md
 002_lists_005_solutions.md
+003_traversal_001_theory.md
