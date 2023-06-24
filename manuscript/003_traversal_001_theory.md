@@ -48,7 +48,7 @@ bool dfs(int64_t row, int64_t col,
 
 <!-- https://compiler-explorer.com/z/TMGzEoE6a -->
 
-We can flatten the recursive version using a stack data structure.
+We can flatten the recursive version using a stack data structure. However, we need to remember the LIFO nature of a stack. The order of exploration will be inversed from the order in which we insert the elements into the stack.
 
 {caption: "Implementation of depth-first search using a std::stack."}
 ```cpp
@@ -94,3 +94,59 @@ bool dfs(int64_t row, int64_t col,
     return false;
 }
 ```
+
+<!-- https://compiler-explorer.com/z/vds8Wh5Yd -->
+
+## Breadth-first search
+
+While the depth-first search is excellent for finding a path, we don't necessarily get the shortest path. To find the shortest path, we can use the breadth-first search algorithm.
+
+The algorithm visits spaces in lock-step, first visiting all spaces next to the starting point, then all spaces next to those, i.e., two spaces away from the start, then three, four, etc. To visualize, you can think about how water would flood the maze from the starting point.
+
+![Breadth-first search demonstration.](traversal/maze_bfs.png)
+
+When implementing a breadth-first search, we need a data structure that will allow us to process the elements in the strict order we discover them, a queue.
+
+{caption: "Implementation of breadth-first search using a std::queue."}
+```cpp
+int64_t bfs(int64_t row, int64_t col, std::vector<std::vector<char>>& map) {
+    std::queue<std::tuple<int64_t,int64_t,int64_t>> next;
+    next.push({row,col,0});
+
+    // As long as we have spaces to explore.
+    while (!next.empty()) {
+        auto [row,col,dist] = next.front();
+        next.pop();
+
+        // If this space is the exit, we have found our path.
+        // Return the current length.
+        if (map[row][col] == 'E')
+            return dist;
+
+        // Mark as visited
+        map[row][col] = '.';
+
+        // Helper to check if a space can be stepped on
+        // i.e. not out of bounds and either empty or exit.
+        auto is_path = [&map](int64_t row, int64_t col) {
+            return row >= 0 && row < std::ssize(map) &&
+                col >= 0 && col < std::ssize(map[row]) &&
+                (map[row][col] == ' ' || map[row][col] == 'E');
+        };
+        
+        if (is_path(row-1,col)) // North
+            next.push({row-1,col,dist+1});
+        if (is_path(row+1,col)) // South
+            next.push({row+1,col,dist+1});
+        if (is_path(row,col-1)) // West
+            next.push({row,col-1,dist+1});
+        if (is_path(row,col+1)) // East
+            next.push({row,col+1,dist+1});
+    }
+
+    // We have explored all reachable spaces 
+    // and didn't find the exit.
+    return -1;
+}
+```
+
