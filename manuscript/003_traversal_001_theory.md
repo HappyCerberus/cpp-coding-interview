@@ -150,3 +150,21 @@ int64_t bfs(int64_t row, int64_t col, std::vector<std::vector<char>>& map) {
 }
 ```
 
+<!-- https://compiler-explorer.com/z/nvsdKsqcd -->
+
+## Backtracking
+
+Both depth-first and breadth-first searches are traversal algorithms that attempt to reach a specific goal. The difference between algorithms is only in the order in which they traverse the space.
+
+However, in some situations, we may not know the goal and only know the properties the path toward the goal must fulfill.
+
+The backtracking algorithm explores the solution space in a depth-first order, discarding paths that do not fulfill the requirements.
+
+Let's take a look at a concrete example: The N-Queens problem.
+
+The goal is to place N-Queens onto an NxN chessboard without any of the queens attacking each other, i.e., no queens sharing a row, column, or diagonal.
+
+The paths we explore are partial but valid solutions that build upon each other.
+
+![Demonstration of backtracking for the 4-Queens problem.](traversal/backtracking.png)
+
