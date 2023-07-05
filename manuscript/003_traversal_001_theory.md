@@ -160,11 +160,55 @@ However, in some situations, we may not know the goal and only know the properti
 
 The backtracking algorithm explores the solution space in a depth-first order, discarding paths that do not fulfill the requirements.
 
-Let's take a look at a concrete example: The N-Queens problem.
-
-The goal is to place N-Queens onto an NxN chessboard without any of the queens attacking each other, i.e., no queens sharing a row, column, or diagonal.
-
-The paths we explore are partial but valid solutions that build upon each other.
+Let's take a look at a concrete example: The N-Queens problem. The goal is to place N-Queens onto an NxN chessboard without any of the queens attacking each other, i.e., no queens sharing a row, column, or diagonal.
 
 ![Demonstration of backtracking for the 4-Queens problem.](traversal/backtracking.png)
 
+The paths we explore are partial but valid solutions that build upon each other. In the above example, we traverse the solution space in row order. First, we pick a position for a queen in the first row, then second, then third, and finally fourth. The example also demonstrates two dead-ends we reach if we place the queen in the first row into the first column.
+
+{caption: "Example implementation of backtracking."}
+```cpp
+#include <vector>
+#include <cstdint>
+
+// Check if we can place a queen in the specified row and column
+bool available(std::vector<int64_t>& solution, 
+               int64_t row, int64_t col) {
+    for (int64_t queen = 0; queen < std::ssize(solution); ++queen) {
+        // Column occupied
+        if (solution[queen] == col)
+            return false;
+        // NorthEast/SouthWest diagonal occupied
+        if (row + col == queen + solution[queen])
+            return false;
+        // NorthWest/SouthEast diagonal occupied
+        if (row - col == queen - solution[queen])
+            return false;
+    }
+    return true;
+}
+
+bool backtrack(std::vector<int64_t>& solution, int64_t n) {
+    if (std::ssize(solution) == n)
+        return true;
+
+    // We are trying to fit a queen on row std::ssize(solution)
+    for (int64_t column = 0; column < n; ++column) {
+        if (!available(solution, std::ssize(solution), column))
+            continue;
+      
+        // This space is not in conflict
+        solution.push_back(column);
+        // We found a solution, exit
+        if (backtrack(solution, n))
+            return true;
+        // This was a dead-end, remove the queen from this position
+        solution.pop_back();
+    }
+
+  	// This is a dead-end
+    return false;
+}
+```
+
+<!-- https://compiler-explorer.com/z/WGeh6abv5 -->
