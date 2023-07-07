@@ -108,7 +108,19 @@ int shortest_path(const std::vector<std::vector<int>>& grid, int64_t k) {
 
 ### Shortest path with non-unit costs
 
-<!-- uneven terrain dfs -->
+In all the problems we discussed, the cost of moving from one space to another was always one unit. Notably, breadth-first search requires this property since, without unit cost, our queue of spaces would not be processed strictly by distance.
+
+Therefore if we are working with a problem that doesn't have unit cost, we must adjust our approach.
+
+Consider the following problem: Given a 2D heightmap of size *m\*n*, where negative integers represent impassable terrain and positive integers represent the terrain height, determine the shortest path from *{0,0}* to *{m-1,n-1}* under the following constraints:
+
+- the path cannot cross impassable terrain
+- moving on a level terrain costs two time-units
+- moving downhill costs one time-unit
+- moving uphill costs four time-units
+
+{class: tip}
+B> Before you continue reading, try solving this problem yourself. The scaffolding for this problem is located at `traversal/heightmap`. Your goal is to make the following commands pass without any errors: `bazel test //traversal/heightmap/...`, `bazel test --config=addrsan //traversal/heightmap/...`, `bazel test --config=ubsan //traversal/heightmap/...`.
 
 ### Constraint propagation
 
