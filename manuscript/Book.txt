@@ -7,3 +7,4 @@
 002_lists_005_solutions.md
 003_traversal_001_theory.md
 003_traversal_002_variants.md
+003_traversal_003_problems.md
