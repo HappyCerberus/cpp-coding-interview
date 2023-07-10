@@ -7,6 +7,8 @@ Let's start with our goal. We want to determine whether we can visit all the loc
 
 Because we are not concerned with the optimality of our solution, only whether it is possible to collect all keys, we can choose depth-first search as our base algorithm. We will use one key in each step of our solution. Using a key will potentially give us access to more keys.
 
+![Example of one possible DFS execution on the example problem.](traversal/locked_rooms_dfs.png)
+
 Once we run out of keys, we can check whether we have collected a complete set. With a complete set of keys, we can visit all rooms.
 
 {caption: "Solution for the locked rooms problem."}
