@@ -1,6 +1,44 @@
 {full: true, community: true}
 ## Solutions
 
+### Locked rooms
+
+Let's start with our goal. We want to determine whether we can visit all the locked rooms. However, this is a bit too complex, as we would need to consider both rooms and keys. We can simplify the problem by reformulating our goal: collect a complete set of keys.
+
+Because we are not concerned with the optimality of our solution, only whether it is possible to collect all keys, we can choose depth-first search as our base algorithm. We will use one key in each step of our solution. Using a key will potentially give us access to more keys.
+
+Once we run out of keys, we can check whether we have collected a complete set. With a complete set of keys, we can visit all rooms.
+
+{caption: "Solution for the locked rooms problem."}
+```cpp
+bool locked_rooms(const std::vector<std::vector<int>>& rooms) {
+    // Keep track of the keys we have collected
+    std::vector<bool> keys(rooms.size(),false);
+    
+    std::stack<int> keys_to_use;
+    keys_to_use.push(0); // We start with the key to room 0
+    keys[0] = true;
+
+    while (!keys_to_use.empty()) {
+        // Use the key to open a room
+        int key = keys_to_use.top();
+        keys_to_use.pop();
+        
+        // Check if any of the keys in the room are new
+        for (int k : rooms[key])
+        if (!keys[k]) {
+            keys_to_use.push(k);
+            keys[k] = true;
+        }
+    }
+
+    // Do we have all the keys?
+    return std::ranges::all_of(keys, std::identity{});
+}
+```
+
+<!-- https://compiler-explorer.com/z/bY9q9xd85 -->
+
 
 ### Sudoku solver
 
@@ -13,6 +51,8 @@ A good middle ground is applying the primary Sudoku constraint: each number can 
 ![Example of the effect of primary Sudoku constraints. The highlighted cell has only two possible values: six and seven.](traversal/sudoku_constraints.png)
 
 The implementation mirrors the solution for the N-Queens problem with constraint propagation; however, because we are working with a statically sized puzzle (9x9), we can additionally take advantage of the fastest C++ containers: *std::array* and *std::bitset*.
+
+Each Sudoku puzzle has nine rows, nine columns, and nine boxes. Each of which we can represent with a *std::bitset*, where 1s represent digits already present in the corresponding row, column, or box.
 
 {caption: "Solution for the Sudoku solver problem."}
 ```cpp
