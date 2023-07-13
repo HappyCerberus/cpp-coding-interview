@@ -1,13 +1,14 @@
 {full: true, community: true}
 # Traversal algorithms
 
-In this chapter, we will discuss the three foundational algorithms we will keep revisiting throughout the rest of the book.
+This chapter is dedicated to three algorithms we will keep revisiting in different variants throughout the book. The two search/traversal algorithms, depth-first and breadth-first search, and the traversal/constraint algorithm, backtracking.
 
-Let's start with a problem: imagine you need to find a path in a maze. How would you do it?
+Let's start with a problem: imagine you need to find a path in a maze; how would you do it?
 
 ![Maze with one entrance and one exit.](traversal/maze_base.png)
 
-Your first intuition might follow the depth-first search algorithm, opportunistically exploring until you reach a dead-end, then returning to the last crossroads and taking a different path.
+You could wander randomly, and while that might take a very long time, you will eventually reach the end.
+However, for a more structured approach, you might consider an approach similar to a depth-first search, exploring each branch until you reach a dead-end, then returning to the previous crossroads and taking a different path.
 
 ## Depth-first search
 
