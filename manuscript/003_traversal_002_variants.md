@@ -5,6 +5,8 @@ All three traversal algorithms discussed in the previous section are reasonably 
 
 However, a couple of more advanced variants are also reasonably frequent. This section will discuss three: working with multiple dimensions, non-unit costs, and propagating constraints.
 
+This section also demonstrates each variant using a concrete problem, all available in the companion repository. Try solving each of them before you read the corresponding solution.
+
 ### Multi-dimensional traversal
 
 Applying a depth-first or breadth-first search to a problem with additional spatial dimensions should be straightforward. From the algorithm's perspective, additional dimensions only introduce a broader neighborhood for each space. In some problems, the additional dimensions will not be that obvious.
@@ -16,9 +18,9 @@ B> Before you continue reading, try solving this problem yourself. The scaffoldi
 
 Because we are looking for the shortest path, we don't have a choice of the traversal algorithm. We must use a breadth-first search. But how do we deal with the obstacles?
 
-Let's consider adding a 3rd dimension to the problem. When we remove an obstacle, we move to a new floor of the maze where that obstacle never existed. However, we can't apply this logic mindlessly since there are potentially *m\*n* obstacles.
+Let's consider adding a 3rd dimension to the problem. Instead of removing an obstacle, we can virtually move to a new maze floor, where this obstacle never existed. However, this introduces a problem. We can't apply this logic mindlessly since there are potentially *m\*n* obstacles.
 
-Fortunately, we can lean on the behaviour of breadth-first search. When we enter a new floor of the maze, we have a guarantee that we will never revisit the space we entered through. This means we do not have to track which specific obstacles we removed, only how many we can still remove. Therefore we end up with a total complexity of *m\*n\*(k+1)*.
+Fortunately, we can lean on the behaviour of breadth-first search. When we enter a new floor of the maze, we have a guarantee that we will never revisit the space we entered through. This means we do not have to track which specific obstacles we removed, only how many we can still remove, shrinking the number of floors to *k+1*. Applying a breadth-first search then leaves us with a total time complexity of *O(m\*n\*(k+1))*.
 
 {caption: "Breadth-first search in a maze with obstacle removal."}
 ```cpp
@@ -108,7 +110,7 @@ int shortest_path(const std::vector<std::vector<int>>& grid, int64_t k) {
 
 ### Shortest path with non-unit costs
 
-In all the problems we discussed, the cost of moving from one space to another was always one unit. Notably, breadth-first search requires this property since, without unit cost, our queue of spaces would not be processed strictly by distance.
+In all the problems we discussed, the cost of moving from one space to another was always one unit. The breadth-first search algorithm explicitly relies on this property to process spaces strictly by distance.
 
 Therefore if we are working with a problem that doesn't have unit cost, we must adjust our approach.
 
@@ -122,6 +124,90 @@ Consider the following problem: Given a 2D heightmap of size *m\*n*, where negat
 {class: tip}
 B> Before you continue reading, try solving this problem yourself. The scaffolding for this problem is located at `traversal/heightmap`. Your goal is to make the following commands pass without any errors: `bazel test //traversal/heightmap/...`, `bazel test --config=addrsan //traversal/heightmap/...`, `bazel test --config=ubsan //traversal/heightmap/...`.
 
+The primary requirement of BFS is that we process elements in the order of their distance from the start of the path. When all transitions have a unit cost, we can achieve this by relying on a queue. However, with non-unit costs, we must use an ordered structure such as *std::priority_queue*. Note that switching to a priority queue will affect the time complexity as we are moving from *O(1)* *push* and *pop* operations to *O(log(n))* *push* and *pop* operations.
+
+The second problem is that with unit costs we had a guarantee that when we are about to add a new position to the queue, we do not have consider the same position again. This comes down to the lock-step nature of the algorithm; all later paths that would enter this space will at best have the same length.
+
+With non-unit costs, this guarantee no longer holds. It is possible that a later (and longer) path can enter the same space with an overall shorter path length. However, we still have a slightly weaker but still significant guarantee. While we might need to insert a space multiple times into our queue, once we pop it from the queue, we still have the guarantee that this is the shortest path exiting this space.
+
+{caption: "Breadth-first search using a priority queue to handle non-unit costs."}
+```cpp
+#include <vector>
+#include <queue>
+#include <cstdint>
+
+struct Coord {
+    int64_t row;
+    int64_t col;
+};
+
+int64_t shortest_path(const std::vector<std::vector<int>>& map, 
+                        Coord start, Coord end) {
+    struct Pos {
+        int64_t length;
+        Coord coord;
+    };
+
+    // For tracking visited spaces
+    std::vector<std::vector<bool>> visited(map.size(), 
+        std::vector<bool>(map[0].size(), false));
+
+    // Helper to check whether a space can be stepped on
+    // not out of bounds, not impassable and not visited
+    auto can_step = [&map, &visited](Coord coord) {
+        auto [row, col] = coord;
+        return row >= 0 && col >= 0 && 
+            row < std::ssize(map) && col < std::ssize(map[row]) && 
+            map[row][col] >= 0 && 
+            !visited[row][col];
+    };
+
+    // Priority queue instead of a simple queue
+    std::priority_queue<Pos, std::vector<Pos>, 
+        decltype([](const Pos& l, const Pos& r) {
+            return l.length > r.length;
+        })> q;
+    // Start with path length zero at start
+    q.push({0,start});
+
+    // Helper to determine the cost of moving between two spaces
+    auto step_cost = [&map](Coord from, Coord to) {
+        if (map[from.row][from.col] < map[to.row][to.col]) return 4;
+        if (map[from.row][from.col] > map[to.row][to.col]) return 1;
+        return 2;
+    };
+
+    while (!q.empty()) {
+        // Grab the position closest to the start
+        auto [length, pos] = q.top();
+        q.pop();
+
+        if (visited[pos.row][pos.col]) continue;
+        // The first time we grab a position from the queue is guaranteed
+        // to be the shortest path, so now we need to mark it as visited.
+        // If we later visit the same position (already in queue at this point)
+        // with a longer path, we skip it based on the above check.
+        visited[pos.row][pos.col] = true;
+
+        // First time we would try to exit the end space is the shortest path.
+        if (pos.row == end.row && pos.col == end.col)
+            return length;
+
+        // Expand to all four directions
+        for (auto next : {Coord{pos.row-1,pos.col}, 
+                          Coord{pos.row+1, pos.col},
+                          Coord{pos.row, pos.col-1},
+                          Coord{pos.row, pos.col+1}}) {
+            if (!can_step(next)) continue;
+            q.push({length + step_cost(pos, next), next});
+        }
+    }
+
+    return -1;
+}
+```
+
+<!-- https://compiler-explorer.com/z/3PjxPz8Tx -->
 
 ### Constraint propagation
 

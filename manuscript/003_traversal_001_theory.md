@@ -8,6 +8,7 @@ Let's start with a problem: imagine you need to find a path in a maze; how would
 ![Maze with one entrance and one exit.](traversal/maze_base.png)
 
 You could wander randomly, and while that might take a very long time, you will eventually reach the end.
+
 However, for a more structured approach, you might consider an approach similar to a depth-first search, exploring each branch until you reach a dead-end, then returning to the previous crossroads and taking a different path.
 
 ## Depth-first search
@@ -155,7 +156,7 @@ int64_t bfs(int64_t row, int64_t col, std::vector<std::vector<char>>& map) {
 
 ## Backtracking
 
-Both depth-first and breadth-first searches are traversal algorithms that attempt to reach a specific goal. The difference between algorithms is only in the order in which they traverse the space.
+Both depth-first and breadth-first searches are traversal algorithms that attempt to reach a specific goal. The difference between the two algorithms is only in the order in which they traverse the space.
 
 However, in some situations, we may not know the goal and only know the properties the path toward the goal must fulfill.
 
@@ -166,6 +167,8 @@ Let's take a look at a concrete example: The N-Queens problem. The goal is to pl
 ![Demonstration of backtracking for the 4-Queens problem.](traversal/backtracking.png)
 
 The paths we explore are partial but valid solutions that build upon each other. In the above example, we traverse the solution space in row order. First, we pick a position for a queen in the first row, then second, then third, and finally fourth. The example also demonstrates two dead-ends we reach if we place the queen in the first row into the first column.
+
+A backtracking algorithm implementation will be similar to a depth-first search. However, we must keep track of the partial solution (the path), adding to the solution as we explore further and removing from the solution when we return from a dead-end.
 
 {caption: "Example implementation of backtracking."}
 ```cpp
