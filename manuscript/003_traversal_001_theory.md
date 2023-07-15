@@ -1,7 +1,7 @@
 {full: true, community: true}
 # Traversal algorithms
 
-This chapter is dedicated to three algorithms we will keep revisiting in different variants throughout the book. The two search/traversal algorithms, depth-first and breadth-first search, and the traversal/constraint algorithm, backtracking.
+This chapter is dedicated to three algorithms we will keep revisiting in different variants throughout the book. The two search-traversal algorithms, depth-first and breadth-first search, and the constraint-traversal algorithm, backtracking.
 
 Let's start with a problem: imagine you need to find a path in a maze; how would you do it?
 
@@ -25,12 +25,12 @@ Because of the repeating nested nature, a recursive implementation is a natural 
 ```cpp
 bool dfs(int64_t row, int64_t col,
          std::vector<std::vector<char>>& map) {
-    // Check for out of bounds.
+    // Check for out-of-bounds.
     if (row < 0 || row == std::ssize(map) ||
         col < 0 || col == std::ssize(map[row]))
         return false;
 
-    // If we have reached the exit, terminate the search.
+    // If we reached the exit, we are done.
     if (map[row][col] == 'E')
         return true;
     // If this is not an unvisited space, do not
@@ -64,7 +64,7 @@ bool dfs(int64_t row, int64_t col,
         auto [row,col] = next.top();
         next.pop();
 
-        // If this space is the exit, we have found our path.
+        // If we reached the exit, we are done.
         if (map[row][col] == 'E')
             return true;
 
@@ -72,7 +72,7 @@ bool dfs(int64_t row, int64_t col,
         map[row][col] = '.';
 
         // Helper to check if a space can be stepped on
-        // i.e. not out of bounds and either empty or exit.
+        // i.e. not out-of-bounds and either empty or exit.
         auto is_path = [&map](int64_t row, int64_t col) {
             return row >= 0 && row < std::ssize(map) &&
                 col >= 0 && col < std::ssize(map[row]) &&
@@ -99,11 +99,11 @@ bool dfs(int64_t row, int64_t col,
 
 <!-- https://compiler-explorer.com/z/vds8Wh5Yd -->
 
+While the depth-first search is excellent for finding a path, we don't necessarily get the shortest path. If our goal is to determine reachability, a depth-first search will be sufficient; however, if we require the path to be optimal, we must use the breadth-first search.
+
 ## Breadth-first search
 
-While the depth-first search is excellent for finding a path, we don't necessarily get the shortest path. To find the shortest path, we can use the breadth-first search algorithm.
-
-The algorithm visits spaces in lock-step, first visiting all spaces next to the starting point, then all spaces next to those, i.e., two spaces away from the start, then three, four, etc. To visualize, you can think about how water would flood the maze from the starting point.
+As the name suggests, the algorithm expands in breadth, visiting spaces in lock-step. The algorithm first visits all spaces next to the starting point, then all spaces next to those, i.e., two spaces away from the start, then three, four, and so on. To visualize, you can think about how water would flood the maze from the starting point.
 
 ![Breadth-first search demonstration.](traversal/maze_bfs.png)
 
@@ -120,16 +120,16 @@ int64_t bfs(int64_t row, int64_t col, std::vector<std::vector<char>>& map) {
         auto [row,col,dist] = next.front();
         next.pop();
 
-        // If this space is the exit, we have found our path.
+        // If we reached the exit, we are done.
         // Return the current length.
         if (map[row][col] == 'E')
             return dist;
 
-        // Mark as visited
+        // Mark as visited.
         map[row][col] = '.';
 
         // Helper to check if a space can be stepped on
-        // i.e. not out of bounds and either empty or exit.
+        // i.e. not out-of-bounds and either empty or exit.
         auto is_path = [&map](int64_t row, int64_t col) {
             return row >= 0 && row < std::ssize(map) &&
                 col >= 0 && col < std::ssize(map[row]) &&
@@ -158,7 +158,7 @@ int64_t bfs(int64_t row, int64_t col, std::vector<std::vector<char>>& map) {
 
 Both depth-first and breadth-first searches are traversal algorithms that attempt to reach a specific goal. The difference between the two algorithms is only in the order in which they traverse the space.
 
-However, in some situations, we may not know the goal and only know the properties the path toward the goal must fulfill.
+However, in some situations, we may not know the goal and only know the properties (constraints) the path toward the goal must fulfill.
 
 The backtracking algorithm explores the solution space in a depth-first order, discarding paths that do not fulfill the requirements.
 
