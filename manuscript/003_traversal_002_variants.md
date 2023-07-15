@@ -1,15 +1,15 @@
 {full: true, community: true}
 ## Notable variants
 
-All three traversal algorithms discussed in the previous section are reasonably self-contained. Typically traversal algorithms can be applied as solutions to various problems without substantial modifications.
+The traversal algorithms mentioned earlier are largely standalone, ready to be deployed to solve diverse problems with minimal tweaks.
 
-However, a couple of more advanced variants are also reasonably frequent. This section will discuss three: working with multiple dimensions, non-unit costs, and propagating constraints.
+Yet, we frequently encounter a few additional versions. In this section, we'll tackle three such variants: traversing multiple dimensions, adjusting for non-unit costs, and managing the propagation of constraints.
 
-This section also demonstrates each variant using a concrete problem, all available in the companion repository. Try solving each of them before you read the corresponding solution.
+We'll also illustrate each variant using a concrete problem, all of which you can find in the companion repository. Try solving each of them before you read the corresponding solution.
 
 ### Multi-dimensional traversal
 
-Applying a depth-first or breadth-first search to a problem with additional spatial dimensions should be straightforward. From the algorithm's perspective, additional dimensions only introduce a broader neighborhood for each space. In some problems, the additional dimensions will not be that obvious.
+Applying a depth-first or breadth-first search to a problem with additional spatial dimensions is straightforward. From the algorithm's perspective, additional dimensions only introduce a broader neighborhood for each space. However, in some problems, the additional dimensions will not be that obvious.
 
 Consider the following problem: Given a 2D grid of size *m\*n*, containing *0s* (spaces) and *1s* (obstacles), determine the length of the shortest path from the coordinate *{0,0}* to *{m-1,n-1}*, given that you can remove up to *k* obstacles.
 
@@ -114,7 +114,7 @@ In all the problems we discussed, the cost of moving from one space to another w
 
 Therefore if we are working with a problem that doesn't have unit cost, we must adjust our approach.
 
-Consider the following problem: Given a 2D heightmap of size *m\*n*, where negative integers represent impassable terrain and positive integers represent the terrain height, determine the shortest path from *{0,0}* to *{m-1,n-1}* under the following constraints:
+Consider the following problem: Given a 2D heightmap of size *m\*n*, where negative integers represent impassable terrain and positive integers represent the terrain height, determine the shortest path between the two given coordinates under the following constraints:
 
 - the path cannot cross impassable terrain
 - moving on a level terrain costs two time-units
@@ -126,9 +126,11 @@ B> Before you continue reading, try solving this problem yourself. The scaffoldi
 
 The primary requirement of BFS is that we process elements in the order of their distance from the start of the path. When all transitions have a unit cost, we can achieve this by relying on a queue. However, with non-unit costs, we must use an ordered structure such as *std::priority_queue*. Note that switching to a priority queue will affect the time complexity as we are moving from *O(1)* *push* and *pop* operations to *O(log(n))* *push* and *pop* operations.
 
-The second problem is that with unit costs we had a guarantee that when we are about to add a new position to the queue, we do not have consider the same position again. This comes down to the lock-step nature of the algorithm; all later paths that would enter this space will at best have the same length.
+The second guarantee we lose concerns the shortest path when we first push a space into the queue. If we discovered a space with a path length *X* we had a guarantee that all later paths that also lead to this space would, at best equal *X*. Because of this constraint, we could limit ourselves to adding each space into the queue only once. With non-unit costs, this property no longer holds.
 
-With non-unit costs, this guarantee no longer holds. It is possible that a later (and longer) path can enter the same space with an overall shorter path length. However, we still have a slightly weaker but still significant guarantee. While we might need to insert a space multiple times into our queue, once we pop it from the queue, we still have the guarantee that this is the shortest path exiting this space.
+It is possible that a later (and longer) path can enter the same space with an overall shorter path length. Consequently, we might need to insert a space multiple times into our queue (bounded by the number of neighbours). However, we still have a slightly weaker but still significant guarantee. The ordered nature of the priority queue guarantees that the first time we pop a space from the queue, it is part of the shortest path that enters this space.
+
+Due to the queue's logarithmic complexity, we end up with *O(m\*n\*log(m\*n))* overall time complexity for the breadth-first search.
 
 {caption: "Breadth-first search using a priority queue to handle non-unit costs."}
 ```cpp
