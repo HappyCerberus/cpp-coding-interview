@@ -178,7 +178,7 @@ int count_islands(std::vector<std::vector<char>> grid) {
 
 <!-- https://compiler-explorer.com/z/57czf9j3G -->
 
-## All valid parentheses sequences
+### All valid parentheses sequences
 
 Enumerating all possible combinations under a specific constraint is a canonical problem for backtracking. Our first objective is to formulate our constraints.
 
