@@ -119,6 +119,7 @@ data.erase_after(it);
 ```
 <!-- https://compiler-explorer.com/z/sozrMh8MT -->
 
+{#custom_lists}
 ## Custom lists
 
 When implementing a simple custom linked list, you might be tempted to use a straightforward implementation using a *std::unique_ptr*.

@@ -10,3 +10,4 @@
 003_traversal_003_problems.md
 003_traversal_004_hints.md
 003_traversal_005_solutions.md
+004_trees_001_theory.md
