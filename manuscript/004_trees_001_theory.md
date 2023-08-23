@@ -20,11 +20,14 @@ struct TreeNode {
     std::unique_ptr<TreeNode> right;
 };
 
-auto root = std::make_unique<TreeNode<std::string>>("root node", nullptr, nullptr);
+auto root = std::make_unique<TreeNode<std::string>>(
+    "root node", nullptr, nullptr);
 // root->value == "root node"
-root->left = std::make_unique<TreeNode<std::string>>("left node", nullptr, nullptr);
+root->left = std::make_unique<TreeNode<std::string>>(
+    "left node", nullptr, nullptr);
 // root->left->value == "left node"
-root->right = std::make_unique<TreeNode<std::string>>("right node", nullptr, nullptr);
+root->right = std::make_unique<TreeNode<std::string>>(
+    "right node", nullptr, nullptr);
 // root->right->value == "right node"
 ```
 
@@ -55,3 +58,91 @@ for (int i = 0; i < 100000; ++i)
 
 <!-- https://compiler-explorer.com/z/MPYhf3T77 -->
 
+{class: information}
+B> As a reminder: The recursive nature comes from chaining *std::unique_ptr*. As part of destroying a *std::unique_ptr\<TreeNode\<int\>\>* we need first to destroy the child node, which in turn needs to destroy its child, and so on.
+B> Each program has a limited stack space, and a sufficiently deep naive binary tree can easily exhaust this space.
+
+While the above approach isn't quite suitable for production code, it does offer a convenient interface. For example, splicing the tree requires only calling *std::swap* on the source and destination *std::unique_ptr* (and will work across trees).
+
+To avoid recursive destruction, we can separate the encoding of the structure of the tree from resource ownership.
+
+{caption: "A binary tree with structure and resource ownership separated."}
+```cpp
+template <typename T>
+struct Tree {
+    struct Node {
+        T value = T{};
+        Node* left = nullptr;
+        Node* right = nullptr;
+    };
+    Node* add(auto&& ... args) {
+        storage_.push_back(std::make_unique<Node>(std::forward<decltype(args)>(args)...));
+        return storage_.back().get();
+    }
+    Node* root;
+private:
+    std::vector<std::unique_ptr<Node>> storage_;
+};
+
+Tree<std::string> tree;
+tree.root = tree.add("root node");
+// tree.root->value == "root node"
+tree.root->left = tree.add("left node");
+// tree.root->left->value == "left node"
+tree.root->right = tree.add("right node");
+// tree.root->right->value == "right node"
+```
+
+<!-- https://compiler-explorer.com/z/sWeG659cr -->
+
+This approach does completely remove the recursive destruction; however, we pay for that.
+While we can still easily splice within a single tree, splicing between multiple trees becomes cumbersome (because it involves splicing between the resource pools).
+
+In the context of C++, neither of the above solutions is particularly performance-friendly. The biggest problem is that we are allocating each node separately, which means that they can be allocated far apart, in the worst-case situation, each node mapping to a different cache line.
+
+Conceptually, the solution is obvious: flatten the tree. However, as we are talking about performance-sensitive design, the specific details of the approach matter a lot and should consider the data access patterns.
+
+The following is one possible approach for a binary tree.
+
+{caption: "One possible approach for representing a binary tree using flat data structures."}
+```cpp
+constexpr inline size_t nillnode = 
+    std::numeric_limits<size_t>::max();
+
+template <typename T>
+struct Tree {
+    struct Children {
+        size_t left = nillnode;
+        size_t right = nillnode;
+    };
+
+    std::vector<T> data;
+    std::vector<Children> children;
+
+    size_t add(auto&&... args) {
+        data.emplace_back(std::forward<decltype(args)>(args)...);
+        children.push_back(Children{});
+        return data.size()-1;
+    }
+    size_t add_as_left_child(size_t idx, auto&&... args) {
+        size_t cid = add(std::forward<decltype(args)>(args)...);
+        children[idx].left = cid;
+        return cid;
+    }
+    size_t add_as_right_child(size_t idx, auto&&... args) {
+        size_t cid = add(std::forward<decltype(args)>(args)...);
+        children[idx].right = cid;
+        return cid;
+    }
+};
+
+Tree<std::string> tree;
+auto root = tree.add("root node");
+// tree.data[root] == "root node"
+auto left = tree.add_as_left_child(root, "left node");
+// tree.data[left] == "left node", tree.children[root].left == left
+auto right = tree.add_as_right_child(root, "right node");
+// tree.data[right] == "right node", tree.children[root].right == right
+```
+
+<!-- https://compiler-explorer.com/z/6PoxzcYz7 -->
