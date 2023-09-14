@@ -11,3 +11,9 @@
 003_traversal_004_hints.md
 003_traversal_005_solutions.md
 004_trees_001_theory.md
+004_trees_002_traversal.md
+004_trees_003_bst.md
+004_trees_004_paths.md
+004_trees_005_problems.md
+004_trees_006_hints.md
+004_trees_007_solutions.md

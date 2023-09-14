@@ -62,7 +62,7 @@ for (int i = 0; i < 100000; ++i)
 B> As a reminder: The recursive nature comes from chaining *std::unique_ptr*. As part of destroying a *std::unique_ptr\<TreeNode\<int\>\>* we need first to destroy the child node, which in turn needs to destroy its child, and so on.
 B> Each program has a limited stack space, and a sufficiently deep naive binary tree can easily exhaust this space.
 
-While the above approach isn't quite suitable for production code, it does offer a convenient interface. For example, splicing the tree requires only calling *std::swap* on the source and destination *std::unique_ptr* (and will work across trees).
+While the above approach isn't quite suitable for production code, it does offer a convenient interface. For example, splicing the tree requires only calling *std::swap* on the source and destination *std::unique_ptr*, which will work even across trees.
 
 To avoid recursive destruction, we can separate the encoding of the structure of the tree from resource ownership.
 
@@ -76,7 +76,8 @@ struct Tree {
         Node* right = nullptr;
     };
     Node* add(auto&& ... args) {
-        storage_.push_back(std::make_unique<Node>(std::forward<decltype(args)>(args)...));
+        storage_.push_back(std::make_unique<Node>(
+            std::forward<decltype(args)>(args)...));
         return storage_.back().get();
     }
     Node* root;
@@ -146,3 +147,5 @@ auto right = tree.add_as_right_child(root, "right node");
 ```
 
 <!-- https://compiler-explorer.com/z/6PoxzcYz7 -->
+
+As usual, we pay for the added performance by increased complexity. We must refer to nodes through their indices since both iterators and references get invalidated during a *std::vector* reallocation. On top of that, implementing splicing for a flat tree would be non-trivial and not particularly performant as it involves re-indexing.

@@ -11,6 +11,7 @@ You could wander randomly, and while that might take a very long time, you will 
 
 However, for a more structured approach, you might consider an approach similar to a depth-first search, exploring each branch until you reach a dead-end, then returning to the previous crossroads and taking a different path.
 
+{#dfs}
 ## Depth-first search
 
 The depth-first search opportunistically picks a direction at each space and explores that direction fully before returning to this space and picking a different path.
@@ -101,6 +102,7 @@ bool dfs(int64_t row, int64_t col,
 
 While the depth-first search is excellent for finding a path, we don't necessarily get the shortest path. If our goal is to determine reachability, a depth-first search will be sufficient; however, if we require the path to be optimal, we must use the breadth-first search.
 
+{#bfs}
 ## Breadth-first search
 
 As the name suggests, the algorithm expands in breadth, visiting spaces in lock-step. The algorithm first visits all spaces next to the starting point, then all spaces next to those, i.e., two spaces away from the start, then three, four, and so on. To visualize, you can think about how water would flood the maze from the starting point.
