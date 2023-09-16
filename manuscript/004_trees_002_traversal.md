@@ -61,6 +61,8 @@ Tree<int>::Node *deserialize(Tree<int>& tree, std::istream& s) {
 
 <!-- https://compiler-explorer.com/z/eKrsWPMz7 -->
 
+#### Non-recursive pre-order
+
 With a recursive approach, we can run into the same stack exhaustion problem we faced during tree destruction.
 Fortunately, we can use an alternative approach, an implementation based on the *std::stack* (or *std::vector*) data structure.
 
@@ -90,7 +92,7 @@ void pre_order_stack(Node* root, const std::function<void(Node*)>& visitor) {
 
 In post-order traversal, we visit each node after its children.
 
-{caption: "Recursive post-order traversal of a binary tree.}
+{caption: "Recursive post-order traversal of a binary tree."}
 ```cpp
 void post_order(Node *node, const std::function<void(Node*)>& visitor) {
     if (node == nullptr) return;
@@ -101,7 +103,6 @@ void post_order(Node *node, const std::function<void(Node*)>& visitor) {
 ```
 
 Because of this ordering, post-order can be used in expression trees, where we can only evaluate the parent expression if both its children were already evaluated.
-
 
 {caption: "Simple expression tree implementation where each node."}
 ```cpp
@@ -132,14 +133,18 @@ right->right = tree.add(Eventual{1});
 post_order(tree.root, [](Node* node) {
     // if this node already has a result value, we don't have to do anything
     if (std::holds_alternative<int>(node->value.content)) return;
-    // if it is an operation, evaluate post-order guarantees 
-    // that node->left->value and node->right->value both have result values
-    node->value.content = std::get<1>(node->value.content)(node->left->value, node->right->value);
+    // if it is an operation, then evaluate
+    // post-order guarantees that node->left->value 
+    // and node->right->value both have result values
+    node->value.content = std::get<1>(node->value.content)(
+        node->left->value, node->right->value);
 });
 // get<0>(root->value.content) == 6
 ```
 
 <!-- https://compiler-explorer.com/z/hjr7rj7EK -->
+
+#### Non-recursive post-order
 
 For a non-recursive approach, we could visit all nodes in pre-order, remembering each, and then iterate over the nodes in reverse order. However, we can do better:
 
@@ -182,7 +187,7 @@ While both pre-order and post-order traversals directly apply to n-ary trees, in
 
 In in-order traversal, we visit each node in between visiting its left and right children.
 
-{caption: "Recursive in-order traversal of a binary tree.}
+{caption: "Recursive in-order traversal of a binary tree."}
 ```cpp
 // in-order traversal
 void in_order(Node* node, const std::function<void(Node*)>& visitor) {
@@ -192,31 +197,6 @@ void in_order(Node* node, const std::function<void(Node*)>& visitor) {
     in_order(node->right, visitor);
 }
 ```
-
-The non-recursive approach is similar to post-order, but we avoid the complexity of remembering the right child.
-
-{caption: "Non-recursive in-order traversal implementation."}
-```cpp
-void in_order_nonrecursive(Node *root, const std::function<void(Node*)>& visitor) {
-    std::stack<Node*> s;
-    Node *current = root;
-    while (current != nullptr || !s.empty()) {
-        // Explore left
-        while (current != nullptr) {
-            s.push(current);
-            current = current->left;
-        }
-        // Now going back up the left path visit each node, then explore the right child.
-        // This works, because the left child was already visited as we go up the path.
-        current = s.top();
-        s.pop();
-        visitor(current);
-        current = current->right;
-    }
-}
-```
-
-<!-- https://compiler-explorer.com/z/6f9xnTe3z -->
 
 The typical use case for in-order traversal is for traversing trees that encode an ordering of elements. The in-order traversal naturally maintains this order for the traversal.
 
@@ -254,6 +234,35 @@ std::cout << "\n";
 // stdlibc++: 424 545 549 593 603 624 715 845 848 858 
 // libc++: 9 192 359 559 629 684 707 723 763 835
 ```
+
+#### Non-recursive in-order
+
+The non-recursive approach is similar to post-order, but we avoid the complexity of remembering the right child.
+
+{caption: "Non-recursive in-order traversal implementation."}
+```cpp
+void in_order_nonrecursive(Node *root, const std::function<void(Node*)>& visitor) {
+    std::stack<Node*> s;
+    Node *current = root;
+    while (current != nullptr || !s.empty()) {
+        // Explore left
+        while (current != nullptr) {
+            s.push(current);
+            current = current->left;
+        }
+        // Now going back up the left path visit each node, 
+        // then explore the right child. 
+        // This works, because the left child was already
+        // visited as we go up the path.
+        current = s.top();
+        s.pop();
+        visitor(current);
+        current = current->right;
+    }
+}
+```
+
+<!-- https://compiler-explorer.com/z/6f9xnTe3z -->
 
 ### Rank-order traversal
 
