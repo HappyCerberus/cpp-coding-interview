@@ -11,8 +11,8 @@ Given a binary tree, where each node has an integer value, determine the maximum
 
 A path is a sequence of nodes where every two consecutive nodes have a parent/child relationship, and each node is visited at most once. The value of a path is then simply the total of all the node values visited.
 
-<!-- Block pointing to the problem in the repo. -->
-<!-- https://simontoth.substack.com/p/daily-bite-of-c-maximum-path-in-a -->
+{class: information}
+B> The scaffolding for this problem is located at `trees/maximum_path`. Your goal is to make the following commands pass without any errors: `bazel test //trees/maximum_path/...`, `bazel test --config=addrsan //trees/maximum_path/...`, `bazel test --config=ubsan //trees/maximum_path/...`.
 
 Let's consider a single node in the tree. Only four possible paths can be the maximum path that crosses this node:
 
@@ -35,3 +35,54 @@ If the path crosses this node, we can calculate the maximum path by using the in
 The maximum path crossing this node is the maximum of the above paths.
 
 Now that we know what to calculate, we can traverse the tree in post-order (visiting the children before the parent node) while keeping track of the aforementioned values.
+
+{caption: "Solution using post-order traversal."}
+```cpp
+// We return two values:
+//  - the maximum path that terminates in this node
+//  - the maximum path in this sub-tree
+std::pair<int,int> maxPath(Tree::Node* node) {
+    // initialize with single-node paths
+    int max_path = node->value;
+    int max_subtree = node->value;
+    int full_path = node->value;
+
+    if (node->left != nullptr) {
+        // Calculate recursive values for the left path
+        auto [path,tree] = maxPath(node->left);
+        // Path terminating in this node: max of case 1 and 2
+        max_path = std::max(max_path, path + node->value);
+        // maximum path might not be crossing this node,
+        // contained in the left subtree
+        max_subtree = std::max(max_subtree, tree);
+        // value of the crossing path (case 4)
+        full_path += path;
+    }
+    if (node->right != nullptr) {
+        // Calculate recursive values for the right path
+        auto [path,tree] = maxPath(node->right);
+        // Path terminating in this node: max of case 1 and 3
+        // note, we already included the case 2 in the left-node if
+        max_path = std::max(max_path, path + node->value);
+        // maximum path might not be crossing this node,
+        // contained in the right subtree
+        max_subtree = std::max(max_subtree, tree);
+        // value of the crossing path (case 4)
+        full_path += path;
+    }
+    // the full path is the path starting in the left subtree, 
+    // crossing this node, continuing into the right subtree
+    // the maximum path in this subtree is any of the paths
+    max_subtree = std::max(max_subtree, std::max(full_path, max_path));
+    // max_path is the longest path terminating in this node
+    return {max_path, max_subtree};
+}
+
+// Final computation, simply return the maximum
+int maxPath(const Tree& t) {
+    auto [path,tree] = maxPath(t.root);
+    return tree;
+}
+```
+
+<!-- https://compiler-explorer.com/z/bfddTMs3W -->

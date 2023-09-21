@@ -41,7 +41,7 @@ Tree construct_bst(const std::vector<int>& rng) {
 
 As mentioned above, the binary search tree doesn't come with any self-balancing algorithms; we can, therefore, end up in pathological situations, notably when constructing a binary search tree from a sorted input.
 
-![Example of an unballaned tree fromed by inserting elements {1,2,3,4}.](trees/bst_unballanced.png)
+![Example of an unbalanced tree formed by inserting elements {1,2,3,4}.](trees/bst_unballanced.png)
 
 ### Validating a BST
 
@@ -49,6 +49,40 @@ Binary search trees frequently appear during coding interviews as they are still
 
 The most straightforward problem (aside from constructing a BST) is validating whether a binary tree is a binary search tree.
 
-<!-- block with path to the problem and solution -->
+{class: information}
+B> The scaffolding for this problem is located at `trees/validate_bst`. Your goal is to make the following commands pass without any errors: `bazel test //trees/validate_bst/...`, `bazel test --config=addrsan //trees/validate_bst/...`, `bazel test --config=ubsan //trees/validate_bst/...`.
 
-<!-- solution -->
+If we are checking a particular node in a binary search tree, going to the left subtree sets an upper bound on all the values in the subtree and going to the right subtree sets a lower bound on all the values in the subtree.
+
+We need to keep track of these bounds as we explore the tree using pre-order traversal. The tree is a valid binary search tree if we find no violation and isn't valid if we do.
+
+{caption: "Validating a binary search tree."}
+```cpp
+bool is_valid_bst(Node* root, int min, int max) {
+    // Is this node within the bounds?
+    if (root->value > max || root->value < min)
+        return false;
+    // Explore left subtree with the updated bounds
+    if (root->left != nullptr) {
+        if (root->value == INT_MIN) // avoid underflow
+            return false;
+        if (!is_valid_bst(root->left, min, root->value - 1))
+            return false;
+    }
+    // Explore right subtree with the updated bounds
+    if (root->right != nullptr) {
+        if (root->value == INT_MAX) // avoid overflow
+            return false;
+        if (!is_valid_bst(root->right, root->value + 1, max))
+            return false;
+    }
+    return true;
+}
+
+bool is_valid_bst(const Tree& tree) {
+    // Root can be any value
+    return is_valid_bst(tree.root, INT_MIN, INT_MAX);
+}
+```
+
+Note that this solution assumes no repeated values. To support duplicate values we would have adjust the check in the left branch, recursing with the same limit value, instead of `-1`.
