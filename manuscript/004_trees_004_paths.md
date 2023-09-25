@@ -3,15 +3,18 @@
 
 Another ubiquitous category of tree-oriented problems is dealing with paths in trees. Notably, paths in trees can be non-trivial to reason about, but at the same time, the tree structure still offers the possibility for very efficient solutions.
 
+A path is a sequence of nodes where every two consecutive nodes have a parent/child relationship, and each node is visited at most once.
+
+![Example of a tree with two paths.](trees/paths_in_trees.png)
+
 Let's demonstrate this on a concrete interview problem.
 
 ### Maximum path in a tree
 
-Given a binary tree, where each node has an integer value, determine the maximum path in this tree.
-
-A path is a sequence of nodes where every two consecutive nodes have a parent/child relationship, and each node is visited at most once. The value of a path is then simply the total of all the node values visited.
+Given a binary tree, where each node has an integer value, determine the maximum path in this tree. The value of a path is the total of all the node values visited.
 
 {class: information}
+B> Before you continue reading, I encourage you to try to solve it yourself.
 B> The scaffolding for this problem is located at `trees/maximum_path`. Your goal is to make the following commands pass without any errors: `bazel test //trees/maximum_path/...`, `bazel test --config=addrsan //trees/maximum_path/...`, `bazel test --config=ubsan //trees/maximum_path/...`.
 
 Let's consider a single node in the tree. Only four possible paths can be the maximum path that crosses this node:
@@ -20,6 +23,8 @@ Let's consider a single node in the tree. Only four possible paths can be the ma
 - a path coming from the left child, terminating in this node
 - a path coming from the right child, terminating in this node
 - a path crossing this node, i.e. going from one child, crossing this node, continuing to the other child
+
+![The four possible paths crossing a node.](trees/paths_crossing_a_node.png)
 
 Considering the above list, we can limit the information we need to calculate the maximum path in a sub-tree whose root is the above node.
 

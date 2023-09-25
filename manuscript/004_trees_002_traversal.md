@@ -4,7 +4,7 @@
 Before you read this section, I encourage you to familiarize yourself with [depth-first](#dfs) and [breadth-first](#bfs) search.
 Both searches are suitable for traversing a tree.
 
-However, for binary trees in particular, the property we care about is the order in which we visit the nodes of the tree.
+However, for binary trees in particular, the property we care about is the specific order in which we visit the nodes of the tree.
 We will start with three traversals that are all based on depth-first search.
 
 ### Pre-order traversal
@@ -38,7 +38,7 @@ void serialize(Node *node, std::ostream& s) {
 }
 ```
 
-The core reason pre-order traversal is useful for this use case is that we naturaly need the parent node present to start deserializing its children.
+We must have already deserialised the parent node before we can insert its children into the tree. This is why pre-order traversal is a natural fit for this use case.
 
 {caption: "Deserializing a binary tree from a stream of space-delimited integers."}
 ```cpp
@@ -64,7 +64,7 @@ Tree<int>::Node *deserialize(Tree<int>& tree, std::istream& s) {
 #### Non-recursive pre-order
 
 With a recursive approach, we can run into the same stack exhaustion problem we faced during tree destruction.
-Fortunately, we can use an alternative approach, an implementation based on the *std::stack* (or *std::vector*) data structure.
+Fortunately, similar to the baseline depth-first-search, we can switch the recursive implementation to a non-recursive one by relying on a *std::stack* or *std::vector* to store the traversal state.
 
 {caption: "Non-recursive implementation of pre-order traversal."}
 ```cpp
@@ -102,12 +102,13 @@ void post_order(Node *node, const std::function<void(Node*)>& visitor) {
 }
 ```
 
-Because of this ordering, post-order can be used in expression trees, where we can only evaluate the parent expression if both its children were already evaluated.
+Because of this ordering, one use case for post-order is in expression trees, where we can only evaluate the parent expression if both its children were already evaluated.
 
-{caption: "Simple expression tree implementation where each node."}
+{caption: "Example of a simple expression tree implementation where each node contains a value or a simple operation."}
 ```cpp
 struct Eventual {
-    std::variant<int, 
+    std::variant<int, // value
+        // or operation
         std::function<int(const Eventual& l, const Eventual& r)>> content;
 };
 
@@ -131,11 +132,11 @@ right->left = tree.add(Eventual{2});
 right->right = tree.add(Eventual{1});
 
 post_order(tree.root, [](Node* node) {
-    // if this node already has a result value, we don't have to do anything
+    // If this node already has a result value, we don't have to do anything.
     if (std::holds_alternative<int>(node->value.content)) return;
-    // if it is an operation, then evaluate
-    // post-order guarantees that node->left->value 
-    // and node->right->value both have result values
+    // If it is an operation, then evaluate.
+    // Post-order guarantees that node->left->value 
+    // and node->right->value are both values.
     node->value.content = std::get<1>(node->value.content)(
         node->left->value, node->right->value);
 });
@@ -146,7 +147,11 @@ post_order(tree.root, [](Node* node) {
 
 #### Non-recursive post-order
 
-For a non-recursive approach, we could visit all nodes in pre-order, remembering each, and then iterate over the nodes in reverse order. However, we can do better:
+For a non-recursive approach, we could visit all nodes in pre-order, remembering each, and then iterate over the nodes in reverse order.
+However, we can do better.
+
+However, we can do better.
+The main problem we must solve is remembering enough information to correctly decide whether it is time to visit the parent node. The following approach eagerly explores the left sub-tree, remembering both the right sibling and the parent node. When we revisit the parent node, we can decide whether it is time to visit it based on the presence of the right sibling.
 
 {caption: "Non-recursive post-order traversal with only partial memoization."}
 ```cpp
@@ -154,7 +159,7 @@ void post_order_nonrecursive(Node *root, const std::function<void(Node*)>& visit
     std::stack<Node*> s;
     Node *current = root;
     while (true) {
-        // Explore left, but remember node & right child
+        // Explore left, but remember node & right child.
         if (current != nullptr) {
             if (current->right != nullptr)
                 s.push(current->right);
@@ -169,11 +174,13 @@ void post_order_nonrecursive(Node *root, const std::function<void(Node*)>& visit
         // If we have the right child remembered, 
         // it would be on the top of the stack.
         if (current->right && !s.empty() && current->right == s.top()) {
-            // if it is, we must visit it (and it's children) first
+            // If it is, we must visit it (and it's children) first.
             s.pop();
             s.push(current);
             current = current->right;
         } else {
+            // If the top of the stack is not the right child, 
+            // we have already visited it.
             visitor(current);
             current = nullptr;
         }
@@ -183,9 +190,9 @@ void post_order_nonrecursive(Node *root, const std::function<void(Node*)>& visit
 
 ### In-order traversal
 
-While both pre-order and post-order traversals directly apply to n-ary trees, in-order traversal makes sense only with binary trees.
-
 In in-order traversal, we visit each node in between visiting its left and right children.
+
+Unlike pre- and post-order traversals that are relatively general, and we can easily apply them to n-ary trees, in-order traversal only makes sense in the context of binary trees.
 
 {caption: "Recursive in-order traversal of a binary tree."}
 ```cpp
@@ -198,7 +205,7 @@ void in_order(Node* node, const std::function<void(Node*)>& visitor) {
 }
 ```
 
-The typical use case for in-order traversal is for traversing trees that encode an ordering of elements. The in-order traversal naturally maintains this order for the traversal.
+The typical use case for in-order traversal is for traversing binary trees that encode an ordering of elements. The in-order traversal naturally maintains this order during the traversal.
 
 {caption: "Traversing a BST to produce a sorted output."}
 ```cpp
