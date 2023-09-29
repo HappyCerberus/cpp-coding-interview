@@ -5,7 +5,7 @@ Another ubiquitous category of tree-oriented problems is dealing with paths in t
 
 A path is a sequence of nodes where every two consecutive nodes have a parent/child relationship, and each node is visited at most once.
 
-![Example of a tree with two paths.](trees/paths_in_trees.png)
+![Example of a tree with two highlighted paths.](trees/paths_in_trees.png)
 
 Let's demonstrate this on a concrete interview problem.
 
@@ -28,7 +28,7 @@ Let's consider a single node in the tree. Only four possible paths can be the ma
 
 Considering the above list, we can limit the information we need to calculate the maximum path in a sub-tree whose root is the above node.
 
-If the maximum path doesn't cross this node, then the maximum path in this tree exists inside one of the child subtrees.
+If the maximum path doesn't cross this node, then the path is entirely contained in one of the child subtrees.
 
 If the path crosses this node, we can calculate the maximum path by using the information about maximum paths that terminate in the left and right child.
 

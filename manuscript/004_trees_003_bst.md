@@ -3,7 +3,7 @@
 
 Binary trees are a commonly used data structure as they can efficiently encode decisions (at each node, we can progress to the left or right child), leading to *log(n)* complexity (for a balanced tree).
 
-One specific type of tree you can encounter during interviews is a binary search tree. This tree encodes a simple property. For each node, all nodes in the left subtree are of lower values than the value of this node, and all nodes in the right subtree are of higher values than the value of this node.
+One specific type of tree you can encounter during interviews is a binary search tree. This tree encodes a simple property. For each node, all children in the left subtree are of lower values than the value of this node, and all children in the right subtree are of higher values than the value of this node.
 
 ![Example of a balanced binary search tree.](trees/bst_example.png)
 

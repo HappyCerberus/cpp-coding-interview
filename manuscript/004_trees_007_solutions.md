@@ -61,6 +61,8 @@ However, we have a simpler option based on the following observation. Consider a
 
 If the child doesn’t lie on the path between the node and our target, its distance to the target is simply one more than the distance of the parent node. If it does lie on the path between the node and the target, its distance is one less.
 
+![Example that demonstrates the distance changing between children on the path to the target node or not.](trees/kdistance_distances.png)
+
 If we explore the graph using pre-order traversal, we will also have a second guarantee that a node is only on the path if it is also on the path between the root and the target node.
 
 Using these observations, we can construct a two-pass solution.
@@ -131,29 +133,88 @@ std::vector<int> find_distance_k_nodes(Node* root, Node* target, int k) {
 
 ### Sum of distances to all nodes
 
-Let's start with a sub-optimal solution. Consider a subtree for whose root we have already calculated the sum of distances. Moving to the parent node means we are one step further from all the nodes in this subtree.
+We will start with a simpler sub-problem: calculate the sum of distances to all nodes for the root node only.
 
-Therefore if we do a straightforward post-order traversal of the tree, we will be able to calculate the sum of distances for the root node by simply summing up the distances of the children subtrees plus the number of nodes in the subtrees (since being one step further will contribute one per node).
+Let's consider a node with a child subtree represented by the left child. When we move from the child to the parent, we increase the distance to all nodes in this subtree by one or put another way, we increase the total distance by *node_count(left_subtree)*.
 
-Importantly, this gives us the sum of distances only for the root node, so we must repeat the process for each node (treating each node as the tree's root). Because traversal is an *O(n)* operation, we end up with *O(n\*n)* time complexity.
+Therefore, if we want to calculate the sum of distances for the root node, we can do a post-order traversal. At each node, we calculate the sum of distances as *sum_of_distances(left) + node_count(left) + sum_of_distances(right) + node_count(right)*.
 
-Fortunately, there is room for improvement. Let’s consider two neighbour nodes in the tree.
+Because this approach only gives us the solution to the root node, applying this process to the entire tree would require rotating the tree, but more importantly, it would lead to *O(n\*n)* complexity.
 
-When we would calculate their corresponding sum of distances, the formulas would be:
+Fortunately, we can do better.
 
-- *distance_sum(x) = subtree_sum(x) + subtree_sum(y) + node_count(y)*
-- *distance_sum(y) = subtree_sum(y) + subtree_sum(x) + node_count(x)*
-- *distance_sum(x) - distance_sum(y) = node_count(y) - node_count(x)*
+Instead of focusing on the nodes, let's focus on the edges between them. Let's consider a specific edge that we have removed from the tree, and we have calculated the sum of distances for the two nodes originally connected by the removed edge.
+
+![Example of a disconnected tree with the two highlighted nodes for which we have calculated the sum of distances values.](trees/sum_structure.png)
+
+We can reconstruct the sum of distances for the connected tree from the two disjoint values.
+
+- *sum_of_distances(a) = disconnected_sum(a) + disconnected_sum(b) + node_count(b)*
+- *sum_of_distances(b) = disconnected_sum(b) + disconnected_sum(a) + node_count(a)*
+- *sum_of_distances(a) - sum_of_distances(b) = node_count(b) - node_count(a)*
 
 This formula gives us the opportunity to calculate the answer for a child from the value of a parent.
 
-- *distance_sum(child) = distance_sum(parent) + node_count(parent) - node_count(child)*
-- *distance_sum(child) = distance_sum(parent) + (total_nodes - node_count(child)) - node_count(child)*
-- *distance_sum(child) = distance_sum(parent) + total_node - 2\*node_count(child)*
+- *sum_of_distances(child) = sum_of_distances(parent) + node_count(parent) - node_count(child)*
+- *sum_of_distances(child) = sum_of_distances(parent) + (total_nodes - node_count(child)) - node_count(child)*
+- *sum_of_distances(child) = sum_of_distances(parent) + total_node - 2\*node_count(child)*
 
-Therefore, after we calculate the sum of distances for one root node using the post-order traversal, we can traverse the tree using pre-order traversal, filling in the missing values for the non-root nodes.
+After we have calculated the sum of distances for the root node with post-order traversal, we do a second traversal, this time in pre-order, filling in values for all nodes using the above formula.
 
-This leaves us with the optimal *O(n)* solution.
+This gives us a much better *O(n)* time complexity.
+
+{caption: "Solution for the sum of distances problem."}
+```cpp
+struct TreeInfo {    
+    TreeInfo(int n) : subtree_sum(n,0), node_count(n,0), result(n,0) {}
+    std::vector<int> subtree_sum;
+    std::vector<int> node_count;
+    std::vector<int> result;
+};
+
+void post_order(int node, int parent, const std::unordered_multimap<int,int>& neighbours, TreeInfo& info) {
+    // If there are no children we have zero distance and one node.
+    info.subtree_sum[node] = 0;
+    info.node_count[node] = 1;
+
+    auto [begin, end] = neighbours.equal_range(node);
+    for (auto [from, to] : std::ranges::subrange(begin, end)) {
+        // Avoid looping back to the node we came from.
+        if (to == parent) continue;
+        // post_order traversal, visit children first
+        post_order(to, node, neighbours, info);
+        // accumulate number of nodes and distances
+        info.subtree_sum[node] += info.subtree_sum[to] + info.node_count[to];
+        info.node_count[node] += info.node_count[to];
+    }
+}
+
+void pre_order(int node, int parent, const std::unordered_multimap<int,int>& neighbours, TreeInfo& info) {
+    // For the root node the subtree_sum matches the result.
+    if (parent == -1) {
+        info.result[node] = info.subtree_sum[node];
+    } else {
+        // Otherwise, we can calculate the result from the parent,
+        // because in pre-order we visit the parent before the children.
+        info.result[node] = info.result[parent] + info.result.size() - 2*info.node_count[node];
+    }        
+    // Now visit any children.
+    auto [begin, end] = neighbours.equal_range(node);
+    for (auto [from, to] : std::ranges::subrange(begin, end)) {
+        if (to == parent) continue;
+        pre_order(to, node, neighbours, info);
+    }
+}
+
+std::vector<int> distances_in_tree(int n, const std::unordered_multimap<int,int> neighbours) {
+    TreeInfo info(n);
+    // post-order pass to calculate subtree_sum and node_count
+    post_order(0,-1,neighbours,info);
+    // pre-order pass to calculate result
+    pre_order(0,-1,neighbours,info);
+    return info.result;
+}
+```
 
 <!-- https://compiler-explorer.com/z/59zxjq1ca -->
 

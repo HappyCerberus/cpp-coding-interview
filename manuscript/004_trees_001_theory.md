@@ -1,7 +1,7 @@
 {full: true, community: true}
 # Trees
 
-Interview questions that include trees can be tricky, notably in C++. On a fundamental level, linked lists and trees are both directed graphs. Therefore you might expect that solving a problem involving a tree would compare in difficulty to a problem involving a linked list. Unfortunately, trees get no support from the standard library. There is no "tree" data structure or algorithms[^heapalgo].
+Interview questions that include trees can be tricky, notably in C++. You might expect problems involving trees to be of similar complexity to linked lists. In fact, on a fundamental level, both trees and linked lists are directed graphs. However, unlike linked lists, trees do not get support from the standard C++ library. No data structure can directly represent trees, and no algorithms can directly operate on trees[^heapalgo].
 
 [^heapalgo]: You could argue that heap algorithms fit into this category.
 
@@ -9,7 +9,7 @@ Interview questions that include trees can be tricky, notably in C++. On a funda
 
 Since we cannot rely on the standard library to provide a tree data structure, we must build our own. The design options mirror our approaches when implementing a custom linked list (see. [Custom lists](#custom_lists)).
 
-The most straightforward approach for a binary tree would again be to rely on *std::unique_ptr* and have each node own its children.
+The most straightforward approach for a binary tree would be to rely on *std::unique_ptr* and have each node own its children.
 
 {caption: "Flawed approach for implementing a binary tree."}
 ```cpp
@@ -33,9 +33,9 @@ root->right = std::make_unique<TreeNode<std::string>>(
 
 <!-- https://compiler-explorer.com/z/KrTej6nxa -->
 
-While this might be tempting, and notably, this approach even makes sense from an ownership perspective, this approach suffers the same recursive destruction problem as the linked list.
+While this might be tempting, and notably, this approach even makes sense from an ownership perspective, this approach suffers the recursive destruction problem as the linked list.
 
-When working with well-balanced trees, this problem might not manifest; however, a forward-only linked list is a valid binary tree. Therefore we can still easily trigger the problem.
+When working with well-balanced trees, the problem might not manifest; however, a forward-only linked list is still a valid binary tree. Therefore, we can easily trigger the problem.
 
 {caption: "A demonstration of a problem caused by recursive destruction."}
 ```cpp
@@ -59,8 +59,7 @@ for (int i = 0; i < 100000; ++i)
 <!-- https://compiler-explorer.com/z/MPYhf3T77 -->
 
 {class: information}
-B> As a reminder: The recursive nature comes from chaining *std::unique_ptr*. As part of destroying a *std::unique_ptr\<TreeNode\<int\>\>* we need first to destroy the child node, which in turn needs to destroy its child, and so on.
-B> Each program has a limited stack space, and a sufficiently deep naive binary tree can easily exhaust this space.
+B> As a reminder: The recursive nature comes from the chaining of *std::unique_ptr*. As part of destroying a *std::unique_ptr\<TreeNode\<int\>\>* we first need to destroy the child nodes, which first need to destroy their children, and so on. Each program has a limited stack space, and a sufficiently deep naive binary tree can quickly exhaust this space.
 
 While the above approach isn't quite suitable for production code, it does offer a convenient interface. For example, splicing the tree requires only calling *std::swap* on the source and destination *std::unique_ptr*, which will work even across trees.
 
@@ -101,7 +100,7 @@ While we can still easily splice within a single tree, splicing between multiple
 
 In the context of C++, neither of the above solutions is particularly performance-friendly. The biggest problem is that we are allocating each node separately, which means that they can be allocated far apart, in the worst-case situation, each node mapping to a different cache line.
 
-Conceptually, the solution is obvious: flatten the tree. However, as we are talking about performance-sensitive design, the specific details of the approach matter a lot and should consider the data access patterns.
+Conceptually, the solution is obvious: flatten the tree. However, as we are talking about performance-sensitive design, the specific details of the approach matter a lot. A serious implementation will have to take into account the specific data access pattern.
 
 The following is one possible approach for a binary tree.
 

@@ -1,9 +1,9 @@
 {full: true, community: true}
 ## Canonical problems
 
-### Serialize and de-serialize n-ary tree
+### Serialise and de-serialise n-ary tree
 
-Given an n-ary tree data structure, we must implement stream extraction and insertion operations to serialize and deserialize the tree.
+Given an n-ary tree data structure, implement stream extraction and insertion operations that serialise and deserialise the tree. The choice of format is part of the assignment.
 
 {caption: "The tree data structure."}
 ```cpp
@@ -24,17 +24,32 @@ private:
 };
 ```
 
-The choice of format is part of the problem. Each node stores a *uint32_t* value and a vector of weak pointers to children. To add a node to the tree, use the *add_node* method (the method will set the tree root when the parent is *nullptr*).
+![Serialising and deserialising an n-ary tree.](trees/serialize.png)
+
+Each node stores a *uint32_t* value and a vector of weak pointers to children. To add a node to the tree, use the *add_node* method (the method will set the tree root when the parent is *nullptr*).
+
+{class: information}
+B> The scaffolding for this problem is located at `trees/nary_tree`. Your goal is to make the following commands pass without any errors: `bazel test //trees/nary_tree/...`, `bazel test --config=addrsan //trees/nary_tree/...`, `bazel test --config=ubsan //trees/nary_tree/...`.
 
 ### Find all nodes of distance *k* in a binary tree
 
 Given a binary tree containing unique integer values, return all nodes that are *k* distance from the given node *n*.
 
+![Example tree with highlighted nodes distance two from the node with value *9*.](trees/kdistance.png)
+
+{class: information}
+B> The scaffolding for this problem is located at `trees/kdistance`. Your goal is to make the following commands pass without any errors: `bazel test //trees/kdistance/...`, `bazel test --config=addrsan //trees/kdistance/...`, `bazel test --config=ubsan //trees/kdistance/...`.
+
 ### Sum of distances to all nodes
 
 Given a tree with n nodes, represented as a graph using a neighbourhood map, calculate the sum of distances to all other nodes for each node.
 
+![Example of a tree with four nodes and the corresponding calculated sums of distances.](trees/sum_of_distances.png)
+
 The node ids are in the range *\[0,n\)*.
+
+{class: information}
+B> The scaffolding for this problem is located at `trees/sum_distances`. Your goal is to make the following commands pass without any errors: `bazel test //trees/sum_distances/...`, `bazel test --config=addrsan //trees/sum_distances/...`, `bazel test --config=ubsan //trees/sum_distances/...`.
 
 ### Well-behaved paths in a tree
 
@@ -44,6 +59,11 @@ Given a tree, represented using two arrays of length *n*:
 - an array of edges represented as pairs of indexes
 
 Return the number of well-behaved paths. A well-behaved path begins and ends in a node with the same value, with all intermediate nodes being either lower or equal to the values at the ends of the path.
+
+![Example of a tree with five single-node well-behaved paths and one four-node (dashed line) well-behaved path.](trees/well_behaved.png)
+
+{class: information}
+B> The scaffolding for this problem is located at `trees/well_behaved`. Your goal is to make the following commands pass without any errors: `bazel test //trees/well_behaved/...`, `bazel test --config=addrsan //trees/well_behaved/...`, `bazel test --config=ubsan //trees/well_behaved/...`.
 
 ### Number of reorders of a serialized BST
 
