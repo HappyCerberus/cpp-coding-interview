@@ -104,7 +104,7 @@ void post_order(Node *node, const std::function<void(Node*)>& visitor) {
 }
 ```
 
-![Order of visiting nodes using post-order traversal in a full binary tree.](trees/pre_order_traversal.png)
+![Order of visiting nodes using post-order traversal in a full binary tree.](trees/post_order_traversal.png)
 
 Because of this ordering, one use case for post-order is in expression trees, where we can only evaluate the parent expression if both its children were already evaluated.
 
@@ -208,7 +208,7 @@ void in_order(Node* node, const std::function<void(Node*)>& visitor) {
 }
 ```
 
-![Order of visiting nodes using in-order traversal in a full binary tree.](trees/pre_order_traversal.png)
+![Order of visiting nodes using in-order traversal in a full binary tree.](trees/in_order_traversal.png)
 
 The typical use case for in-order traversal is for traversing binary trees that encode an ordering of elements. The in-order traversal naturally maintains this order during the traversal.
 
@@ -299,7 +299,7 @@ void rank_order(Node* root, const std::function<void(Node*)>& visitor) {
 }
 ```
 
-![Order of visiting nodes using rank-order traversal in a full binary tree.](trees/pre_order_traversal.png)
+![Order of visiting nodes using rank-order traversal in a full binary tree.](trees/rank_order_traversal.png)
 
 Rank-order traversal typically comes up as part of more complex problems.
 By default, it can be used to find the closest node to the root that satisfies particular criteria or calculate the nodes' distance from the root.

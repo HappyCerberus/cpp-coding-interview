@@ -33,9 +33,11 @@ std::ostream& operator<<(std::ostream& s, Tree& tree) {
 Node* deserialize(Tree& tree, Node* parent, uint32_t parent_value, std::istream& s) {
     // pre-reading the value allows for cleaner code
     Node* result = tree.add_node(parent_value, parent);
-    int64_t value; // we have to use int64_t to represent all values for uint32_t and -1
+    // we have to use int64_t to represent all values for uint32_t and -1
+    int64_t value; 
     while (s >> value) {
-        if (value < 0) // if we read -1, we are done reading the children of this node
+        if (value < 0) // if we read -1, we are done reading 
+                       // the children of this node
             return result;
         // otherwise recursively de-serialize this child
         deserialize(tree, result, value, s);
@@ -172,7 +174,8 @@ struct TreeInfo {
     std::vector<int> result;
 };
 
-void post_order(int node, int parent, const std::unordered_multimap<int,int>& neighbours, TreeInfo& info) {
+void post_order(int node, int parent, 
+                const std::unordered_multimap<int,int>& neighbours, TreeInfo& info) {
     // If there are no children we have zero distance and one node.
     info.subtree_sum[node] = 0;
     info.node_count[node] = 1;
@@ -189,14 +192,16 @@ void post_order(int node, int parent, const std::unordered_multimap<int,int>& ne
     }
 }
 
-void pre_order(int node, int parent, const std::unordered_multimap<int,int>& neighbours, TreeInfo& info) {
+void pre_order(int node, int parent,
+               const std::unordered_multimap<int,int>& neighbours, TreeInfo& info) {
     // For the root node the subtree_sum matches the result.
     if (parent == -1) {
         info.result[node] = info.subtree_sum[node];
     } else {
         // Otherwise, we can calculate the result from the parent,
         // because in pre-order we visit the parent before the children.
-        info.result[node] = info.result[parent] + info.result.size() - 2*info.node_count[node];
+        info.result[node] = info.result[parent] + info.result.size() 
+                            - 2*info.node_count[node];
     }        
     // Now visit any children.
     auto [begin, end] = neighbours.equal_range(node);
@@ -206,7 +211,8 @@ void pre_order(int node, int parent, const std::unordered_multimap<int,int>& nei
     }
 }
 
-std::vector<int> distances_in_tree(int n, const std::unordered_multimap<int,int> neighbours) {
+std::vector<int> distances_in_tree(
+    int n, const std::unordered_multimap<int,int> neighbours) {
     TreeInfo info(n);
     // post-order pass to calculate subtree_sum and node_count
     post_order(0,-1,neighbours,info);
@@ -220,21 +226,86 @@ std::vector<int> distances_in_tree(int n, const std::unordered_multimap<int,int>
 
 ### Well-behaved paths in a tree
 
-This is a reasonably tricky problem. If we had only a binary tree, we could use a DFS and calculate the number of paths for each parent node based on the available values and the number of paths in the subtrees. Unfortunately, this approach would blow up in complexity with a general tree. So we need something more sophisticated.
+This is a reasonably tricky problem. If the problem was limited to binary trees, we could use post-order traversal, keep track of values not blocked by parent nodes with higher values and then construct intersections from the left and right subtrees.
 
-Instead of considering the parent nodes as connection points, let’s consider the edges (each edge divides the tree into two sub-trees).
+We can't apply this simple logic to an n-arry tree as we would have to check every subtree against every other subtree at each node, quickly exploding the complexity.
 
-As a reminder, a valid path requires that both ends have the same value, and all intermediate nodes are, at most, equal to the ends of the path. This hints at an ordered approach.
+Instead of considering the nodes, let's think in terms of edges. Because we are working with a tree, each edge divides the tree into two trees.
 
-And, if we process the edges in the order of their maximum value, i.e. *std::max(value[node_left], value[node_right])*, we get some interesting guarantees.
+As a reminder, a valid path requires that both ends have the same values and all intermediate nodes are, at most, equal to the ends of the path. This gives us a hint towards using an ordered approach.
 
-- The maximum value in either of the connected subtrees is at most *std::max(value[node_left], value[node_right])*, and in fact, that has to be the maximum value in at least one of the subtrees.
-- If the maximum value in one of the subtrees is lower than *std::max(value[node_left], value[node_right])*, no valid paths are crossing this edge (since the maximum node creates a natural barrier).
-- If the maximum value in both of the subtrees is *std::max(value[node_left], value[node_right])*, then this edge adds *freq_of_max[left]\*freq_of_max[right]* valid paths. From each node with maximum value in the left subtree to each node with maximum value in the right subtree.
+Let's start with an empty tree with no edge and slowly add the edges in non-descending order based on the values of the nodes on their ends, i.e. *std::max(value[node_left], value[node_right])*.
 
-While this sounds like we have solved the problem, we have created a big issue for ourselves. We need to track the frequencies for the maximum (fortunately, only the maximum) value in each connected subtree, and we need to do it in a way that allows us to look up this value based on any node that is part of this tree (since the newly added edge can connect to any of them).
+This gives us some interesting properties:
 
-Fortunately, the UnionFind algorithm allows us to keep track of a connected subtree by tracking a representative node for each subtree (and each node of that subtree). In our case, we want the representative node to have the maximum value. The part that we care about here is the complexity of the Find operation, which is *O(α(n))*, where α is the inverse Ackerman function (which is <5 for all practical inputs), i.e. O(1) for practical purposes.
+- The maximum value in either of the trees we are connecting by adding this edge is at most *std::max(value[node_left], value[node_right])*, and that has to be the maximum value in at least one of the trees (because both nodes already exist in those trees).
+- If the maximum value in one of the subtrees is lower than *std::max(value[node_left], value[node_right])*, no valid paths are crossing this edge (since the maximum node creates a barrier).
+- If the maximum value in both of the subtrees is *std::max(value[node_left], value[node_right])*, then this edge adds *freq_of_max[left]\*freq_of_max[right]* valid paths. From each node node with the maximum value in the left subtree to each node with the maximum value in the right subtree.
+
+While this looks like a complete solution, we have a big problem. How do we efficiently keep track of the frequencies of the maximum values? Not only that, a new edge might be connecting to any node in a connected subtree, so we also need to be able to retrieve the frequency for a connected subtree based on any node in this subtree.
+
+Fortunately, the UnionFind algorithm offers a solution. Union find can keep track of connected components by keeping track of a representative node for each component. In our case, the components are subtree, and we additionally want the representative node to be one of the nodes with the maximum value.
+
+{caption: "Solution for the well-behaved paths problem."}
+```cpp
+// UnionFind
+int64_t find(std::vector<int64_t>& root, int64_t i) {
+    if (root[i] == i) // This is the representative node for this subtree
+        return i;
+    // Otherwise find the representative node and cache for future lookups.
+    // The caching is what provides the O(alpha(n)) complexity.
+    return root[i] = find(root, root[i]);
+}
+
+int64_t well_behaved_paths(std::vector<int64_t> values, std::vector<std::pair<int64_t,int64_t>> edges) {
+    // Start with all nodes disconnected, each node is the
+    // representative node of its subtree.
+    std::vector<int64_t> root(values.size(), 0);
+    std::ranges::iota(root,0);
+
+    // The frequencies of the maximum value in each subtree.
+    std::vector<int64_t> freq(values.size(), 1);
+
+    // Start with trivial paths.
+    int64_t result = values.size();
+
+    std::ranges::sort(edges, [&](auto& l, auto& r) {
+        return std::max(values[l.first], values[l.second]) < 
+            std::max(values[r.first], values[r.second]);
+    });
+
+    for (auto &edge : edges) {
+        // Find the representative nodes for the two ends.
+        // The representative nodes are always the maximum value nodes.
+        int64_t l_max = find(root, edge.first);
+        int64_t r_max = find(root, edge.second);
+
+        // The maximum in both subtrees is the same.
+        if (values[l_max] == values[r_max]) {
+            // Add path from each maximum node in left subtree to each
+            // maximum node in right subtree.
+            result += freq[l_max]*freq[r_max];
+
+            // Merge the trees right into left
+            freq[l_max] += freq[r_max];
+            root[r_max] = l_max;
+        } else if (values[l_max] > values[r_max]) {
+            // No new paths, but merge the trees
+            // right into left.
+            root[r_max] = l_max;
+            // This doesn't change the frequency because
+            // all nodes in r_max subtree < values[l_max].
+        } else { // (values[r_max] > values[l_max])
+            // No new paths, but merge the trees
+            // left into right.
+            root[l_max] = r_max;
+            // This doesn't change the frequency because
+            // all nodes in l_max subtree < values[r_max].
+        }
+    }
+    return result;
+}
+```
 
 <!-- https://compiler-explorer.com/z/5boshjqv1 -->
 
@@ -257,5 +328,50 @@ This leads to a total formula: *reorderings(left)\*reorderings(right)\*coeff(n-1
 This implies that we will have to pre-calculate the binomial coefficients, which we can do using Pascal’s triangle.
 
 Finally, we need to apply the requested modulo operation where appropriate.
+
+{caption: "Solution for the number of BST reorders problem."}
+```cpp
+constexpr inline int32_t mod = 1e9+7;
+
+int32_t count(std::span<int> nums, 
+              std::vector<std::vector<int>>& coef) {
+    if (nums.size() < 3) return 1;
+
+    // Partition into left and right child
+    auto rng = std::ranges::stable_partition(nums, 
+        [pivot = nums[0]](int v) { return v < pivot; });
+    auto left = std::span(nums.begin(), rng.begin());
+    // Skip the pivot, since the pivot is the parent node
+    auto right = std::span(rng.begin()+1, nums.end());
+
+    // Calculate the number of reorders for both sub-trees
+    int64_t left_cnt = count(left, coef) % mod;
+    int64_t right_cnt = count(right, coef) % mod;
+    // Side note, we need 64bit here because we need
+    // to fit 32bit*32bit in the bellow calculation.
+  
+    // The result is:
+    // left * right * number of ways to pick positions
+    // for left.size() elements in nums.size()-1 positions.
+    return ((left_cnt*right_cnt) % mod)
+      *coef[nums.size()-1][left.size()] % mod;
+}
+
+int32_t number_of_reorders(std::span<int> nums) {
+    // Precalculate binomial coefficients upto nums.size()-1
+    std::vector<std::vector<int>> binomial_coefficients;
+    binomial_coefficients.resize(nums.size());
+    for (int64_t i = 0; i < std::ssize(nums); ++i) {
+        binomial_coefficients[i].resize(i+1, 1);
+        for (int64_t j = 1; j < i; ++j)
+            // Pascal's triangle
+            binomial_coefficients[i][j] = 
+                (binomial_coefficients[i-1][j-1] + 
+                 binomial_coefficients[i-1][j]) % mod;
+    }
+
+    return (count(nums, binomial_coefficients)-1) % mod;
+}
+```
 
 <!-- https://compiler-explorer.com/z/shvje5T8j -->

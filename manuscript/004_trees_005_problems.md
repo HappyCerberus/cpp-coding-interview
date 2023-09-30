@@ -71,4 +71,7 @@ Given a permutation of *1..N* as *std::vector<int>*, return the number of other 
 
 Because the number of permutations can be high, return the result as modulo *10^9+7*.
 
+![Example of two reorders that lead to the same binary search tree.](trees/bst_reorder.png)
 
+{class: information}
+B> The scaffolding for this problem is located at `trees/bst_reorders`. Your goal is to make the following commands pass without any errors: `bazel test //trees/bst_reorders/...`, `bazel test --config=addrsan //trees/bst_reorders/...`, `bazel test --config=ubsan //trees/bst_reorders/...`.
