@@ -1,6 +1,10 @@
 {full: true, community: true}
 ## Canonical problems
 
+Tree problems can cover quite a range, from simple variants of the basic traversals through various variants of paths in trees to tricky problems that require non-trivial analysis for an efficient solution.
+
+This section covers three medium complexity problems: (de)serializing an n-ary tree, all nodes' k-distance, and the number of reorders of a BST. The section also covers two tricky problems: sum of distances to all nodes and well-behaved paths.
+
 ### Serialise and de-serialise n-ary tree
 
 Given an n-ary tree data structure, implement stream extraction and insertion operations that serialise and deserialise the tree. The choice of format is part of the assignment.

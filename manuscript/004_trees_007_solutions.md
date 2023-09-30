@@ -257,7 +257,8 @@ int64_t find(std::vector<int64_t>& root, int64_t i) {
     return root[i] = find(root, root[i]);
 }
 
-int64_t well_behaved_paths(std::vector<int64_t> values, std::vector<std::pair<int64_t,int64_t>> edges) {
+int64_t well_behaved_paths(std::vector<int64_t> values, 
+                           std::vector<std::pair<int64_t,int64_t>> edges) {
     // Start with all nodes disconnected, each node is the
     // representative node of its subtree.
     std::vector<int64_t> root(values.size(), 0);
