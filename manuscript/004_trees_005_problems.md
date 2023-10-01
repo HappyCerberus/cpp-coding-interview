@@ -28,6 +28,7 @@ private:
 };
 ```
 
+{width: "100%"}
 ![Serialising and deserialising an n-ary tree.](trees/serialize.png)
 
 Each node stores a *uint32_t* value and a vector of weak pointers to children. To add a node to the tree, use the *add_node* method (the method will set the tree root when the parent is *nullptr*).
@@ -39,6 +40,7 @@ B> The scaffolding for this problem is located at `trees/nary_tree`. Your goal i
 
 Given a binary tree containing unique integer values, return all nodes that are *k* distance from the given node *n*.
 
+{width: "35%"}
 ![Example tree with highlighted nodes distance two from the node with value *9*.](trees/kdistance.png)
 
 {class: information}
@@ -48,6 +50,7 @@ B> The scaffolding for this problem is located at `trees/kdistance`. Your goal i
 
 Given a tree with n nodes, represented as a graph using a neighbourhood map, calculate the sum of distances to all other nodes for each node.
 
+{width: "50%"}
 ![Example of a tree with four nodes and the corresponding calculated sums of distances.](trees/sum_of_distances.png)
 
 The node ids are in the range *\[0,n\)*.
@@ -64,6 +67,7 @@ Given a tree, represented using two arrays of length *n*:
 
 Return the number of well-behaved paths. A well-behaved path begins and ends in a node with the same value, with all intermediate nodes being either lower or equal to the values at the ends of the path.
 
+{width: "30%"}
 ![Example of a tree with five single-node well-behaved paths and one four-node (dashed line) well-behaved path.](trees/well_behaved.png)
 
 {class: information}
@@ -75,6 +79,7 @@ Given a permutation of *1..N* as *std::vector<int>*, return the number of other 
 
 Because the number of permutations can be high, return the result as modulo *10^9+7*.
 
+{width: "20%"}
 ![Example of two reorders that lead to the same binary search tree.](trees/bst_reorder.png)
 
 {class: information}

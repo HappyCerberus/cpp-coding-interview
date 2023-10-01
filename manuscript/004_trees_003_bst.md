@@ -5,6 +5,7 @@ Binary trees are a commonly used data structure as they can efficiently encode d
 
 One specific type of tree you can encounter during interviews is a binary search tree. This tree encodes a simple property. For each node, all children in the left subtree are of lower values than the value of this node, and all children in the right subtree are of higher values than the value of this node.
 
+{width: "50%"}
 ![Example of a balanced binary search tree.](trees/bst_example.png)
 
 A balanced binary search tree can be used as a quick lookup table, as we can lookup any value using *log(n)* operations; however, whether we will arrive at a balanced tree very much depends on the order in which elements are inserted into the tree, as the binary search tree doesn't come with any self-balancing algorithms (for that we would have to go to Red-Black trees, which is outside the scope of this book).
@@ -41,6 +42,7 @@ Tree construct_bst(const std::vector<int>& rng) {
 
 As mentioned above, the binary search tree doesn't come with any self-balancing algorithms; we can, therefore, end up in pathological situations, notably when constructing a binary search tree from a sorted input.
 
+{width: "35%"}
 ![Example of an unbalanced tree formed by inserting elements {1,2,3,4}.](trees/bst_unballanced.png)
 
 ### Validating a BST
@@ -55,6 +57,7 @@ B> The scaffolding for this problem is located at `trees/validate_bst`. Your goa
 
 If we are checking a particular node in a binary search tree, going to the left subtree sets an upper bound on all the values in the left subtree and going to the right subtree sets a lower bound on all the values in the right subtree.
 
+{width: "50%"}
 ![Example of partitioning of values imposed by nodes in a binary search tree.](trees/bst_partitions.png)
 
 If we traverse the tree, keeping track and verifying these bounds, we will validate the BST. If we do not discover any violations, the tree is a BST; if we do, it isn't.

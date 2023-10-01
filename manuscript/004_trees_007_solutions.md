@@ -63,6 +63,7 @@ However, we have a simpler option based on the following observation. Consider a
 
 If the child doesn’t lie on the path between the node and our target, its distance to the target is simply one more than the distance of the parent node. If it does lie on the path between the node and the target, its distance is one less.
 
+{width: "35%"}
 ![Example that demonstrates the distance changing between children on the path to the target node or not.](trees/kdistance_distances.png)
 
 If we explore the graph using pre-order traversal, we will also have a second guarantee that a node is only on the path if it is also on the path between the root and the target node.
@@ -147,6 +148,7 @@ Fortunately, we can do better.
 
 Instead of focusing on the nodes, let's focus on the edges between them. Let's consider a specific edge that we have removed from the tree, and we have calculated the sum of distances for the two nodes originally connected by the removed edge.
 
+{width: "20%"}
 ![Example of a disconnected tree with the two highlighted nodes for which we have calculated the sum of distances values.](trees/sum_structure.png)
 
 We can reconstruct the sum of distances for the connected tree from the two disjoint values.
