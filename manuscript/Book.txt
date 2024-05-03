@@ -17,3 +17,5 @@
 004_trees_005_problems.md
 004_trees_006_hints.md
 004_trees_007_solutions.md
+005_binary_001_monotonic.md
+005_binary_002_convex.md
